@@ -22,18 +22,18 @@ typedef struct reaction_str {
 //      num_reagents - The number of reagents that can be involved in the
 //                     reaction. Note that the actual number of reagents
 //                     will be between 1 and num_reagents
-//      max_reaction_rate - The largest reaction rate that this reaction
+//      max_rate_constant - The largest reaction rate that this reaction
 //                          can have
-//      min_reaction_rate - The smallest reaction rate that this reaction
+//      min_rate_constant - The smallest reaction rate that this reaction
 //                          can have. Note that the actual reaction is
 //                          equally likely to be of any order of magnitude
-//                          between min_reaction_rate and max_reaction_rate
+//                          between min_rate_constant and max_reaction_rate
 void SetRandomReaction(Reaction_Ptr reaction,
                        int num_reagents,
-                       float max_reaction_rate,
-                       float min_reaction_rate);
+                       float max_rate_constant,
+                       float min_rate_constant);
 
-// Returns a Reaction with one random reactant and one random product (Reaction_Ptr reaction,UniUni),
+// Returns a Reaction with one random reactant and one random product (UniUni),
 // and a randomly selected reaction rate
 //
 // Parameters:
@@ -41,18 +41,18 @@ void SetRandomReaction(Reaction_Ptr reaction,
 //      num_reagents - The number of reagents that can be involved in the
 //                     reaction. Note that the actual number of reagents
 //                     will be between 1 and num_reagents
-//      max_reaction_rate - The largest reaction rate that this reaction
+//      max_rate_constant - The largest reaction rate that this reaction
 //                          can have
-//      min_reaction_rate - The smallest reaction rate that this reaction
+//      min_rate_constant - The smallest reaction rate that this reaction
 //                          can have. Note that the actual reaction is
 //                          equally likely to be of any order of magnitude
-//                          between min_reaction_rate and max_reaction_rate
+//                          between min_rate_constant and max_reaction_rate
 void SetRandomUniUni(Reaction_Ptr reaction,
                      int num_reagents,
-                     float max_reaction_rate,
-                     float min_reaction_rate);
+                     float max_rate_constant,
+                     float min_rate_constant);
 
-// Returns a Reaction with two random reactants and one random product (Reaction_Ptr reaction,BiUni),
+// Returns a Reaction with two random reactants and one random product (BiUni),
 // and a randomly selected reaction rate
 //
 // Parameters:
@@ -60,18 +60,18 @@ void SetRandomUniUni(Reaction_Ptr reaction,
 //      num_reagents - The number of reagents that can be involved in the
 //                     reaction. Note that the actual number of reagents
 //                     will be between 1 and num_reagents
-//      max_reaction_rate - The largest reaction rate that this reaction
+//      max_rate_constant - The largest reaction rate that this reaction
 //                          can have
-//      min_reaction_rate - The smallest reaction rate that this reaction
+//      min_rate_constant - The smallest reaction rate that this reaction
 //                          can have. Note that the actual reaction is
 //                          equally likely to be of any order of magnitude
-//                          between min_reaction_rate and max_reaction_rate
+//                          between min_rate_constant and max_reaction_rate
 void SetRandomBiUni(Reaction_Ptr reaction,
                     int num_reagents,
-                    float max_reaction_rate,
-                    float min_reaction_rate);
+                    float max_rate_constant,
+                    float min_rate_constant);
 
-// Returns a Reaction with one random reactant and two random products (Reaction_Ptr reaction,UniBi),
+// Returns a Reaction with one random reactant and two random products (UniBi),
 // and a randomly selected reaction rate
 //
 // Parameters:
@@ -79,18 +79,18 @@ void SetRandomBiUni(Reaction_Ptr reaction,
 //      num_reagents - The number of reagents that can be involved in the
 //                     reaction. Note that the actual number of reagents
 //                     will be between 1 and num_reagents
-//      max_reaction_rate - The largest reaction rate that this reaction
+//      max_rate_constant - The largest reaction rate that this reaction
 //                          can have
-//      min_reaction_rate - The smallest reaction rate that this reaction
+//      min_rate_constant - The smallest reaction rate that this reaction
 //                          can have. Note that the actual reaction is
 //                          equally likely to be of any order of magnitude
-//                          between min_reaction_rate and max_reaction_rate
+//                          between min_rate_constant and max_reaction_rate
 void SetRandomUniBi(Reaction_Ptr reaction,
                     int num_reagents,
-                    float max_reaction_rate,
-                    float min_reaction_rate);
+                    float max_rate_constant,
+                    float min_rate_constant);
 
-// Returns a Reaction with two random reactants and two random products (Reaction_Ptr reaction,BiBi),
+// Returns a Reaction with two random reactants and two random products (BiBi),
 // and a randomly selected reaction rate
 //
 // Parameters:
@@ -98,21 +98,21 @@ void SetRandomUniBi(Reaction_Ptr reaction,
 //      num_reagents - The number of reagents that can be involved in the
 //                     reaction. Note that the actual number of reagents
 //                     will be between 1 and num_reagents
-//      max_reaction_rate - The largest reaction rate that this reaction
+//      max_rate_constant - The largest reaction rate that this reaction
 //                          can have
-//      min_reaction_rate - The smallest reaction rate that this reaction
+//      min_rate_constant - The smallest reaction rate that this reaction
 //                          can have. Note that the actual reaction is
 //                          equally likely to be of any order of magnitude
-//                          between min_reaction_rate and max_reaction_rate
+//                          between min_rate_constant and max_reaction_rate
 void SetRandomBiBi(Reaction_Ptr reaction,
                    int num_reagents,
-                   float max_reaction_rate,
-                   float min_reaction_rate);
+                   float max_rate_constant,
+                   float min_rate_constant);
 
 // Returns a Reaction with given reactants, products, and reaction rate
 //
 // Note that reactions must not have NO_REAGENT as either their reactant_1
-// or reactant_2, and reaction_rate > 0 must be true
+// or reactant_2, and rate_constant > 0 must be true
 //
 // Parameters:
 //      reaction - Pointer to the reaction to change
@@ -120,13 +120,13 @@ void SetRandomBiBi(Reaction_Ptr reaction,
 //      reactant_2 - Another reactant in the returned Reaction
 //      product_1 - A product in the returned Reaction
 //      product_2 - Another product in the returned Reaction
-//      reaction_rate - The reaction rate in the returned Reaction
+//      rate_constant - The reaction rate in the returned Reaction
 void SetReaction(Reaction_Ptr reaction,
                  int reactant_1,
                  int reactant_2,
                  int product_1,
                  int product_2,
-                 float reaction_rate);
+                 float rate_constant);
 
 // Change the rate constant of a given reaction by at most a user provided
 // amount. The change could either decrease or increase the reaction rate
