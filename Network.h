@@ -83,3 +83,5 @@ int RemoveReaction(Network_Ptr network);
 //      rconfig - Pointer to a struct containing Reaction configuration
 //                parameters. See Config.h
 void ModifyRateConstant(Network_Ptr network, RConfig_Ptr rconfig);
+
+#endif // _NETWORK_H_
