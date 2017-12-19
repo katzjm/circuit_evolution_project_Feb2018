@@ -54,4 +54,15 @@ void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions);
 //                parameters. See Config.h
 void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig, RConfig_Ptr rconfig);
 
-void AddReaction(Network_Ptr network)
+// Adds a reaction to the given network
+//
+// Parameters:
+//      network - Pointer to the network to add a reaction to
+//      nconfig - Pointer to a struct containing Network configuration
+//                parameters. See Config.h
+//      rconfig - Pointer to a struct containing Reaction configuration
+//                parameters. See Config.h
+//
+// Returns:
+//      0 if a Reaction was successfully added, 1 otherwise
+int AddReaction(Network_Ptr network, NConfig_Ptr nconfig, RConfig_Ptr rconfig);
