@@ -4,6 +4,9 @@
  * Author: Josh Katz
  */
 
+#ifndef _REACTION_H_
+#define _REACTION_H_
+
 #include "Configs.h"
 
 #define NO_REAGENT -1
@@ -88,3 +91,5 @@ void SetReaction(Reaction_Ptr reaction,
 //      config - Pointer to a struct containting configuration parameters.
 //               See Config.h
 void MutateRateConstant(Reaction_Ptr reaction, RConfig_Ptr config);
+
+#endif // _REACTION_H_
