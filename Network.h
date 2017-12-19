@@ -6,7 +6,11 @@
  * Author: Josh Katz
  */
 
+#ifndef _NETWORK_H_
+#define _NETWORK_H_
+
 #include "Reaction.h"
+#include "Config.h"
 
 #define MAX_NUM_REACTIONS 30
 
@@ -21,23 +25,11 @@ typedef struct network_str {
 //
 // Parameters:
 //      network - Pointer to the network to fill with reactions
-//      max_num_reactions - The maximum number of reactions that can be
-//                          in this network. If this number is greater
-//                          than MAX_NUM_REACTIONS then MAX_NUM_REACTIONS
-//                          is used
-//      min_num_reactions - The minimum number of reactions that can be
-//                          in this network. If this number is greater
-//                          than MAX_NUM_REACTIONS then MAX_NUM_REACTIONS
-//                          is used
-//      num_reagents - The number of reagents that can be in this network
-//      max_rate_constant - The largest rate constant any reaction can have
-//      min_rate_constant - The smallest rate constant any reaction can have
-void SetRandomNetwork(Network_Ptr network,
-                      int max_num_reactions,
-                      int min_num_reactions,
-                      int num_reagents,
-                      float max_rate_constant,
-                      float min_rate_constant);
+//      nconfig - Pointer to a struct containing Network configuration
+//                parameters. See Config.h
+//      rconfig - Pointer to a struct containing Reaction configuration
+//                parameters. See Config.h
+void SetRandomNetwork(Network_Ptr network, NConfig_Ptr nconfig, RConfig_Ptr rconfig);
 
 // Fills the given Network with copies of the Reactions in reactions
 //
@@ -55,21 +47,11 @@ void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions);
 // cannot be done, the mutation will be a rate constant change
 //
 // Parameters:
-//      network - Pointer to the network mutate
-//      prob_add_reaction - The probability that the mutation will be to add a
-//                          reaction
-//      prob_remove_reaction - The probability that the mutation will be to
-//                             remove a reaction
-//      prob_modify_rate_constant - The probability that the mutation will be
-//                                  to change a rate constant of one of the
-//                                  Reactions
-//      max_percent_change - The maximum percent that the rate constant can
-//                           change. The change may either decrease or
-//                           increase the rate constant
-void MutateNetwork(Network_Ptr network,
-                   float prob_add_reaction,
-                   float prob_remove_reaction,
-                   float prob_modify_rate_constant
-                   float max_percent_change);
+//      network - Pointer to the network to mutate
+//      nconfig - Pointer to a struct containing Network configuration
+//                parameters. See Config.h
+//      rconfig - Pointer to a struct containing Reaction configuration
+//                parameters. See Config.h
+void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig, RConfig_Ptr rconfig);
 
 void AddReaction(Network_Ptr network)
