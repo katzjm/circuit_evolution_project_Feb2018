@@ -66,3 +66,20 @@ void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig, RConfig_Ptr rconfig
 // Returns:
 //      0 if a Reaction was successfully added, 1 otherwise
 int AddReaction(Network_Ptr network, NConfig_Ptr nconfig, RConfig_Ptr rconfig);
+
+// Removes a reaction from the given network
+//
+// Parameters:
+//      network - Pointer to the network to remove a reaction from
+//
+// Returns:
+//      0 if a Reaction was successfully removed, 1 otherwise
+int RemoveReaction(Network_Ptr network);
+
+// Modifies the rate constant of one reaction in the given Network
+//
+// Parameters:
+//      network - Pointer to the network to add a reaction to
+//      rconfig - Pointer to a struct containing Reaction configuration
+//                parameters. See Config.h
+void ModifyRateConstant(Network_Ptr network, RConfig_Ptr rconfig);
