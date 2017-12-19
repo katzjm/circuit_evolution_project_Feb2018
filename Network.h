@@ -51,7 +51,8 @@ void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions);
 
 // Alters the given Network. The Network may have a Reaction added, taken away,
 // or have a rate constant changed, with the probability of each mutation
-// happening given by the client
+// happening given by the client. If an addition or removal of a reaction
+// cannot be done, the mutation will be a rate constant change
 //
 // Parameters:
 //      network - Pointer to the network mutate
@@ -70,3 +71,5 @@ void MutateNetwork(Network_Ptr network,
                    float prob_remove_reaction,
                    float prob_modify_rate_constant
                    float max_percent_change);
+
+void AddReaction(Network_Ptr network)
