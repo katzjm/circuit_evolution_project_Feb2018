@@ -42,7 +42,7 @@ void SetRandomNetwork(Network_Ptr network, NConfig_Ptr nconfig, RConfig_Ptr rcon
 void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions);
 
 // Alters the given Network. The Network may have a Reaction added, taken away,
-// or have a rate constant changed, with the probability of each mutation
+// or have a rate contoustant changed, with the probability of each mutation
 // happening given by the client. If an addition or removal of a reaction
 // cannot be done, the mutation will be a rate constant change
 //
