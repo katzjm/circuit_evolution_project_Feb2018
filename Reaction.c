@@ -5,6 +5,7 @@
  */
 
 #include <stdlib.h>
+#include <assert.h>
 #include "Reaction.h"
 #include "Configs.h"
 
@@ -19,6 +20,12 @@ void SetRandomReaction(Reaction_Ptr reaction, RConfig_Ptr config) {
     } else {
         SetRandomBiBi(reaction, config);
     }
+}
+
+// Returns a rate constant according to user-defined parameters.
+// See Config.h
+static float GetRateConstant(RConfig_Ptr config) {
+    
 }
 
 void SetRandomUniUni(Reaction_Ptr reaction, RConfig_Ptr config) {
@@ -49,24 +56,19 @@ void SetRandomBiBi(Reaction_Ptr reaction, RConfig_Ptr config) {
     reaction->product_2 = rand() % config->num_reagents;
 }
 
-// Returns a Reaction with given reactants, products, and reaction rate
-//
-// Note that reactions must not have NO_REAGENT as either their reactant_1
-// or reactant_2, and rate_constant > 0 must be true
-//
-// Parameters:
-//      reaction - Pointer to the reaction to change
-//      reactant_1 - A reactant in the returned Reaction
-//      reactant_2 - Another reactant in the returned Reaction
-//      product_1 - A product in the returned Reaction
-//      product_2 - Another product in the returned Reaction
-//      rate_constant - The reaction rate in the returned Reaction
 void SetReaction(Reaction_Ptr reaction,
                  int reactant_1,
                  int reactant_2,
                  int product_1,
                  int product_2,
-                 float rate_constant);
+                 float rate_constant) {
+    assert(reactant_1 >= 0 && product_1 >= 0 && rate_constant >= 0);
+    reaction->reactant_1 = reactant_1;
+    reaction->reactant_2 = reactant_2;
+    reaction->product_1 = product_1;
+    reaction->product_2 = product_2;
+    reaction->rate_constant = rate_constant;
+}
 
 // Change the rate constant of a given reaction by at most a user provided
 // amount. The change could either decrease or increase the reaction rate
