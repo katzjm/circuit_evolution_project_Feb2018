@@ -5,6 +5,8 @@
  */
 
 #include <stdlib.h>
+#include "Reaction.h"
+#include "Configs.h"
 
 void SetRandomReaction(Reaction_Ptr reaction, RConfig_Ptr config) {
     float reaction_type = (float) rand() / RAND_MAX;
@@ -19,43 +21,33 @@ void SetRandomReaction(Reaction_Ptr reaction, RConfig_Ptr config) {
     }
 }
 
-// Returns a Reaction with one random reactant and one random product (UniUni),
-// and a randomly selected reaction rate
-//
-// Parameters:
-//      reaction - Pointer to the reaction to change
-//      config - Pointer to a struct containting configuration parameters.
-//               See Config.h
 void SetRandomUniUni(Reaction_Ptr reaction, RConfig_Ptr config) {
-    
+    reaction->reactant_1 = rand() % config->num_reagents;
+    reaction->reactant_2 = NO_REAGENT;
+    reaction->product_1 = rand() % config->num_reagents;
+    reaction->product_2 = NO_REAGENT;
 }
 
-// Returns a Reaction with two random reactants and one random product (BiUni),
-// and a randomly selected reaction rate
-//
-// Parameters:
-//      reaction - Pointer to the reaction to change
-//      config - Pointer to a struct containting configuration parameters.
-//               See Config.h
-void SetRandomBiUni(Reaction_Ptr reaction, RConfig_Ptr config;
+void SetRandomBiUni(Reaction_Ptr reaction, RConfig_Ptr config) {
+    reaction->reactant_1 = rand() % config->num_reagents;
+    reaction->reactant_2 = rand() % config->num_reagents;
+    reaction->product_1 = rand() % config->num_reagents;
+    reaction->product_2 = NO_REAGENT;
+}
 
-// Returns a Reaction with one random reactant and two random products (UniBi),
-// and a randomly selected reaction rate
-//
-// Parameters:
-//      reaction - Pointer to the reaction to change
-//      config - Pointer to a struct containting configuration parameters.
-//               See Config.h
-void SetRandomUniBi(Reaction_Ptr reaction, RConfig_Ptr config);
+void SetRandomUniBi(Reaction_Ptr reaction, RConfig_Ptr config) {
+    reaction->reactant_1 = rand() % config->num_reagents;
+    reaction->reactant_2 = NO_REAGENT;
+    reaction->product_1 = rand() % config->num_reagents;
+    reaction->product_2 = rand() % config->num_reagents;
+}
 
-// Returns a Reaction with two random reactants and two random products (BiBi),
-// and a randomly selected reaction rate
-//
-// Parameters:
-//      reaction - Pointer to the reaction to change
-//      config - Pointer to a struct containting configuration parameters.
-//               See Config.h
-void SetRandomBiBi(Reaction_Ptr reaction, RConfig_Ptr config);
+void SetRandomBiBi(Reaction_Ptr reaction, RConfig_Ptr config) {
+    reaction->reactant_1 = rand() % config->num_reagents;
+    reaction->reactant_2 = rand() % config->num_reagents;
+    reaction->product_1 = rand() % config->num_reagents;
+    reaction->product_2 = rand() % config->num_reagents;
+}
 
 // Returns a Reaction with given reactants, products, and reaction rate
 //
