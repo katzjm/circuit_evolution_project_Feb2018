@@ -13,6 +13,10 @@ typedef struct reaction_config_str {
     float max_rate_constant;
     float min_rate_constant;
     float max_percent_rate_change;
+    float prob_uni_uni;
+    float prob_uni_bi;
+    float prob_bi_uni;
+    float prob_bi_bi;
 } RConfig, *RConfig_Ptr;
 
 typedef struct network_config_str {
