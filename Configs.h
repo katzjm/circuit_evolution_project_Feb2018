@@ -8,7 +8,7 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 
-typedef struct reaction_config_str {
+typedef struct config_str {
     int num_reagents;
     float max_rate_constant;
     float max_percent_rate_change;
@@ -16,19 +16,10 @@ typedef struct reaction_config_str {
     float prob_uni_bi;
     float prob_bi_uni;
     float prob_bi_bi;
-} RConfig, *RConfig_Ptr;
-
-typedef struct network_config_str {
-    RConfig_Ptr rconfig;
     int max_num_reactions;
     int min_num_reactions;
     float prob_add_reaction;
     float prob_remove_reaction;
     float prob_rate_change;
-} NConfig, *NConfig_Ptr;
-
-typedef struct program_config_str {
-
-} PConfig, *PConfig_Ptr;
-
+} Config, *Config_Ptr;
 #endif // _CONFIG_H_
