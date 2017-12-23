@@ -12,6 +12,8 @@
 #include "Reaction.h"
 #include "Config.h"
 
+// Simple min function. Should not be used when either x or y need to be
+// evaluated before comparison
 #define min(x, y) (((x) <= (y)) ? (x) : (y))
 
 void SetRandomNetwork(Network_Ptr network, NConfig_Ptr nconfig) {
@@ -22,16 +24,11 @@ void SetRandomNetwork(Network_Ptr network, NConfig_Ptr nconfig) {
     }
 }
 
-// Fills the given Network with copies of the Reactions in reactions
-//
-// Parameters:
-//      network - Pointer to the network to fill with reactions
-//      reactions - Pointer to an array of reactions copy to network
-//      num_reactions - The number of reactions in the given reaction array.
-//                      Note that if this is greater than MAX_NUM_REACTIONS than
-//                      only the first MAX_NUM_REACTIONS are copied into network
 void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions) {
-    network->num_reactions = (int) num_reactions <= MAX_NUM_REACTIONS ? num_reactions : MAX_NUM_REACTIONS;
+    network->num_reactions = min(num_reactions, MAX_NUM_REACTIONS);
+    for (int i = 0; i < network->num_reactions; i++) {
+        network->reactions[i] = reactions[i];
+    }
 }
 
 // Alters the given Network. The Network may have a Reaction added, taken away,
@@ -45,7 +42,9 @@ void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions) 
 //                parameters. See Config.h
 //      rconfig - Pointer to a struct containing Reaction configuration
 //                parameters. See Config.h
-void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig);
+void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig) {
+
+}
 
 // Adds a reaction to the given network
 //
