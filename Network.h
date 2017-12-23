@@ -9,6 +9,7 @@
 #ifndef _NETWORK_H_
 #define _NETWORK_H_
 
+#include <stdbool.h>
 #include "Reaction.h"
 #include "Config.h"
 
@@ -60,8 +61,8 @@ void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig);
 //                parameters. See Config.h
 //
 // Returns:
-//      0 if a Reaction was successfully added, 1 otherwise
-int AddReaction(Network_Ptr network, NConfig_Ptr nconfig);
+//      true if a Reaction was successfully added, false otherwise
+bool AddReaction(Network_Ptr network, NConfig_Ptr nconfig);
 
 // Removes a reaction from the given network
 //
@@ -69,8 +70,8 @@ int AddReaction(Network_Ptr network, NConfig_Ptr nconfig);
 //      network - Pointer to the network to remove a reaction from
 //
 // Returns:
-//      0 if a Reaction was successfully removed, 1 otherwise
-int RemoveReaction(Network_Ptr network);
+//      true if a Reaction was successfully removed, false otherwise
+bool RemoveReaction(Network_Ptr network);
 
 // Modifies the rate constant of one reaction in the given Network
 //
