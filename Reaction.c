@@ -4,8 +4,9 @@
  * Author: Josh Katz
  */
 
-#include <stdlib.h>
-#include <assert.h>
+#include <stdlib.h>    // for rand
+#include <assert.h>    // for assert
+#include <math.h>      // for fmod
 #include "Reaction.h"
 #include "Configs.h"
 
@@ -25,35 +26,45 @@ void SetRandomReaction(Reaction_Ptr reaction, RConfig_Ptr config) {
 // Returns a rate constant according to user-defined parameters.
 // See Config.h
 static float GetRateConstant(RConfig_Ptr config) {
-    
+    return fmod(rand(), config->max_rate_constant);
+}
+
+// Returns a reagent according to user-defined parameters.
+// See Config.h
+static int GetReagent(RConfig_Ptr config) {
+    return rand() % config->num_reagents;
 }
 
 void SetRandomUniUni(Reaction_Ptr reaction, RConfig_Ptr config) {
-    reaction->reactant_1 = rand() % config->num_reagents;
+    reaction->reactant_1 = GetReagent(config);
     reaction->reactant_2 = NO_REAGENT;
-    reaction->product_1 = rand() % config->num_reagents;
+    reaction->product_1 = GetReagent(config);
     reaction->product_2 = NO_REAGENT;
+    reaction->rate_constant = GetRateConstant(config);
 }
 
 void SetRandomBiUni(Reaction_Ptr reaction, RConfig_Ptr config) {
-    reaction->reactant_1 = rand() % config->num_reagents;
-    reaction->reactant_2 = rand() % config->num_reagents;
-    reaction->product_1 = rand() % config->num_reagents;
+    reaction->reactant_1 = GetReagent(config);
+    reaction->reactant_2 = GetReagent(config);
+    reaction->product_1 = GetReagent(config);
     reaction->product_2 = NO_REAGENT;
+    reaction->rate_constant = GetRateConstant(config);
 }
 
 void SetRandomUniBi(Reaction_Ptr reaction, RConfig_Ptr config) {
-    reaction->reactant_1 = rand() % config->num_reagents;
+    reaction->reactant_1 = GetReagent(config);
     reaction->reactant_2 = NO_REAGENT;
-    reaction->product_1 = rand() % config->num_reagents;
-    reaction->product_2 = rand() % config->num_reagents;
+    reaction->product_1 = GetReagent(config);
+    reaction->product_2 = GetReagent(config);
+    reaction->rate_constant = GetRateConstant(config);
 }
 
 void SetRandomBiBi(Reaction_Ptr reaction, RConfig_Ptr config) {
-    reaction->reactant_1 = rand() % config->num_reagents;
-    reaction->reactant_2 = rand() % config->num_reagents;
-    reaction->product_1 = rand() % config->num_reagents;
-    reaction->product_2 = rand() % config->num_reagents;
+    reaction->reactant_1 = GetReagent(config);
+    reaction->reactant_2 = GetReagent(config);
+    reaction->product_1 = GetReagent(config);
+    reaction->product_2 = GetReagent(config);
+    reaction->rate_constant = GetRateConstant(config);
 }
 
 void SetReaction(Reaction_Ptr reaction,
