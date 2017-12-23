@@ -57,14 +57,13 @@ bool AddReaction(Network_Ptr network, NConfig_Ptr nconfig) {
     return true;
 }
 
-// Removes a reaction from the given network
-//
-// Parameters:
-//      network - Pointer to the network to remove a reaction from
-//
-// Returns:
-//      0 if a Reaction was successfully removed, 1 otherwise
-bool RemoveReaction(Network_Ptr network);
+bool RemoveReaction(Network_Ptr network) {
+    if (network->num_reactions <= 0) {
+        return false;
+    }
+    network->num_reactions--;
+    return true;
+}
 
 // Modifies the rate constant of one reaction in the given Network
 //
