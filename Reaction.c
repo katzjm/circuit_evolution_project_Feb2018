@@ -81,12 +81,8 @@ void SetReaction(Reaction_Ptr reaction,
     reaction->rate_constant = rate_constant;
 }
 
-// Change the rate constant of a given reaction by at most a user provided
-// amount. The change could either decrease or increase the reaction rate
-//
-// Parameters:
-//      reaction - A pointer to the reaction to modify
-//      config - Pointer to a struct containting configuration parameters.
-//               See Config.h
-void MutateRateConstant(Reaction_Ptr reaction, RConfig_Ptr config);
-
+void MutateRateConstant(Reaction_Ptr reaction, RConfig_Ptr config) {
+    float percent_change = fmod(rand(), config->max_percent_rate_change);
+    int change_direction = rand() % 2 == 0 ? 1 : -1;
+    reaction->rate_constant *= percent_change * change_direction;
+}
