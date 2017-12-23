@@ -65,10 +65,11 @@ bool RemoveReaction(Network_Ptr network) {
     return true;
 }
 
-// Modifies the rate constant of one reaction in the given Network
-//
-// Parameters:
-//      network - Pointer to the network to add a reaction to
-//      nconfig - Pointer to a struct containing Network configuration
-//                parameters. See Config.h
-void ModifyRateConstant(Network_Ptr network, NConfig_Ptr nconfig);
+void ModifyRateConstant(Network_Ptr network, NConfig_Ptr nconfig) {
+    if (network->num_reactions < 1) {
+        return;
+    }
+
+    int reaction_to_change = rand() % network->num_reactions;
+    MutateRateConstant(&network->reactions[reaction_to_change], nconfig->rconfig);
+}
