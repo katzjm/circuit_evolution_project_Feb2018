@@ -32,15 +32,6 @@ void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions) 
     }
 }
 
-// Alters the given Network. The Network may have a Reaction added, taken away,
-// or have a rate contoustant changed, with the probability of each mutation
-// happening given by the client. If an addition or removal of a reaction
-// cannot be done, the mutation will be a rate constant change
-//
-// Parameters:
-//      network - Pointer to the network to mutate
-//      nconfig - Pointer to a struct containing Network configuration
-//                parameters. See Config.h
 void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig) {
     float mutation = (float) rand() / RAND_MAX;
     bool network_changed = false;
@@ -56,16 +47,15 @@ void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig) {
     }
 }
 
-// Adds a reaction to the given network
-//
-// Parameters:
-//      network - Pointer to the network to add a reaction to
-//      nconfig - Pointer to a struct containing Network configuration
-//                parameters. See Config.h
-//
-// Returns:
-//      0 if a Reaction was successfully added, 1 otherwise
-bool AddReaction(Network_Ptr network, NConfig_Ptr nconfig);
+bool AddReaction(Network_Ptr network, NConfig_Ptr nconfig) {
+    if (network->num_reactions == MAX_NUM_REACTIONS) {
+        return false;
+    }
+
+    SetRandomReaction(&network->reactions[network->num_reactions], nconfig->rconfig);
+    network->num_reactions++;
+    return true;
+}
 
 // Removes a reaction from the given network
 //
