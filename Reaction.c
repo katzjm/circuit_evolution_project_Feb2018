@@ -68,11 +68,11 @@ void SetRandomBiBi(Reaction_Ptr reaction, RConfig_Ptr config) {
 }
 
 void SetReaction(Reaction_Ptr reaction,
-                 int reactant_1,
-                 int reactant_2,
-                 int product_1,
-                 int product_2,
-                 float rate_constant) {
+                 species_t reactant_1,
+                 species_t reactant_2,
+                 species_t product_1,
+                 species_t product_2,
+                 rate_t rate_constant) {
     assert(reactant_1 >= 0 && product_1 >= 0 && rate_constant >= 0);
     reaction->reactant_1 = reactant_1;
     reaction->reactant_2 = reactant_2;

@@ -12,7 +12,7 @@
 #include "Reaction.h"
 #include "Config.h"
 
-#define MAX_NUM_REACTIONS 30
+#define MAX_NUM_REACTIONS 20
 
 // Memory block for maintaining a network of Reactions
 typedef struct network_str {
@@ -29,7 +29,7 @@ typedef struct network_str {
 //                parameters. See Config.h
 //      rconfig - Pointer to a struct containing Reaction configuration
 //                parameters. See Config.h
-void SetRandomNetwork(Network_Ptr network, NConfig_Ptr nconfig, RConfig_Ptr rconfig);
+void SetRandomNetwork(Network_Ptr network, NConfig_Ptr nconfig);
 
 // Fills the given Network with copies of the Reactions in reactions
 //
@@ -52,7 +52,7 @@ void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions);
 //                parameters. See Config.h
 //      rconfig - Pointer to a struct containing Reaction configuration
 //                parameters. See Config.h
-void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig, RConfig_Ptr rconfig);
+void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig);
 
 // Adds a reaction to the given network
 //
@@ -65,7 +65,7 @@ void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig, RConfig_Ptr rconfig
 //
 // Returns:
 //      0 if a Reaction was successfully added, 1 otherwise
-int AddReaction(Network_Ptr network, NConfig_Ptr nconfig, RConfig_Ptr rconfig);
+int AddReaction(Network_Ptr network, NConfig_Ptr nconfig);
 
 // Removes a reaction from the given network
 //
@@ -80,8 +80,8 @@ int RemoveReaction(Network_Ptr network);
 //
 // Parameters:
 //      network - Pointer to the network to add a reaction to
-//      rconfig - Pointer to a struct containing Reaction configuration
+//      nconfig - Pointer to a struct containing Network configuration
 //                parameters. See Config.h
-void ModifyRateConstant(Network_Ptr network, RConfig_Ptr rconfig);
+void ModifyRateConstant(Network_Ptr network, NConfig_Ptr nconfig);
 
 #endif // _NETWORK_H_

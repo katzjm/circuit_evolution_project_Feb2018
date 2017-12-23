@@ -1,0 +1,78 @@
+/*
+ * A Network represents a group of reactions that governs how different
+ * reagents interact with one another. Note that a Network can support
+ * MAX_NUM_REACTIONS at a time
+ *
+ * Author: Josh Katz
+ */
+
+#include <stdlib.h>
+
+#include "Network.h"
+#include "Reaction.h"
+#include "Config.h"
+
+#define min(x, y) (((x) <= (y)) ? (x) : (y))
+
+void SetRandomNetwork(Network_Ptr network, NConfig_Ptr nconfig) {
+    int num_reaction_range = nconfig->max_num_reactions - nconfig->min_num_reactions;
+    network->num_reactions = rand() % num_reaction_range + nconfig->min_num_reactions;
+    for (int i = 0; i < network->num_reactions; i++) {
+        SetRandomReaction(&network->reactions[i], nconfig->rconfig);
+    }
+}
+
+// Fills the given Network with copies of the Reactions in reactions
+//
+// Parameters:
+//      network - Pointer to the network to fill with reactions
+//      reactions - Pointer to an array of reactions copy to network
+//      num_reactions - The number of reactions in the given reaction array.
+//                      Note that if this is greater than MAX_NUM_REACTIONS than
+//                      only the first MAX_NUM_REACTIONS are copied into network
+void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions) {
+    network->num_reactions = (int) num_reactions <= MAX_NUM_REACTIONS ? num_reactions : MAX_NUM_REACTIONS;
+}
+
+// Alters the given Network. The Network may have a Reaction added, taken away,
+// or have a rate contoustant changed, with the probability of each mutation
+// happening given by the client. If an addition or removal of a reaction
+// cannot be done, the mutation will be a rate constant change
+//
+// Parameters:
+//      network - Pointer to the network to mutate
+//      nconfig - Pointer to a struct containing Network configuration
+//                parameters. See Config.h
+//      rconfig - Pointer to a struct containing Reaction configuration
+//                parameters. See Config.h
+void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig);
+
+// Adds a reaction to the given network
+//
+// Parameters:
+//      network - Pointer to the network to add a reaction to
+//      nconfig - Pointer to a struct containing Network configuration
+//                parameters. See Config.h
+//      rconfig - Pointer to a struct containing Reaction configuration
+//                parameters. See Config.h
+//
+// Returns:
+//      0 if a Reaction was successfully added, 1 otherwise
+int AddReaction(Network_Ptr network, NConfig_Ptr nconfig);
+
+// Removes a reaction from the given network
+//
+// Parameters:
+//      network - Pointer to the network to remove a reaction from
+//
+// Returns:
+//      0 if a Reaction was successfully removed, 1 otherwise
+int RemoveReaction(Network_Ptr network);
+
+// Modifies the rate constant of one reaction in the given Network
+//
+// Parameters:
+//      network - Pointer to the network to add a reaction to
+//      rconfig - Pointer to a struct containing Reaction configuration
+//                parameters. See Config.h
+void ModifyRateConstant(Network_Ptr network, NConfig_Ptr nconfig);
