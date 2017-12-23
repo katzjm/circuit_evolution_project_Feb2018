@@ -7,6 +7,7 @@
  */
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "Network.h"
 #include "Reaction.h"
@@ -42,7 +43,17 @@ void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions) 
 //                parameters. See Config.h
 void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig) {
     float mutation = (float) rand() / RAND_MAX;
-    if ((mutation -= nconfig->prob_add_reaction) == 0) {}
+    bool network_changed = false;
+
+    if ((mutation -= nconfig->prob_add_reaction) <= 0) {
+        network_changed = AddReaction(network, nconfig);
+    } else if ((mutation -= nconfig->prob_remove_reaction) <= 0) {
+        network_changed = RemoveReaction(network);
+    }
+
+    if (mutation > 0 || network_changed == false) {
+        ModifyRateConstant(network, nconfig);
+    }
 }
 
 // Adds a reaction to the given network
@@ -54,7 +65,7 @@ void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig) {
 //
 // Returns:
 //      0 if a Reaction was successfully added, 1 otherwise
-int AddReaction(Network_Ptr network, NConfig_Ptr nconfig);
+bool AddReaction(Network_Ptr network, NConfig_Ptr nconfig);
 
 // Removes a reaction from the given network
 //
@@ -63,7 +74,7 @@ int AddReaction(Network_Ptr network, NConfig_Ptr nconfig);
 //
 // Returns:
 //      0 if a Reaction was successfully removed, 1 otherwise
-int RemoveReaction(Network_Ptr network);
+bool RemoveReaction(Network_Ptr network);
 
 // Modifies the rate constant of one reaction in the given Network
 //
