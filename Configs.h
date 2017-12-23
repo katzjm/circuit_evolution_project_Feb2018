@@ -22,6 +22,9 @@ typedef struct network_config_str {
     RConfig_Ptr rconfig;
     int max_num_reactions;
     int min_num_reactions;
+    float prob_add_reaction;
+    float prob_remove_reaction;
+    float prob_rate_change;
 } NConfig, *NConfig_Ptr;
 
 typedef struct program_config_str {
