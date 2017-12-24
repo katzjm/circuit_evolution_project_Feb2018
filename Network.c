@@ -17,11 +17,11 @@
 // evaluated before comparison
 #define min(x, y) (((x) <= (y)) ? (x) : (y))
 
-void SetRandomNetwork(Network_Ptr network, Config_Ptr nconfig) {
-	int num_reaction_range = nconfig->max_num_reactions - nconfig->min_num_reactions;
-	network->num_reactions = rand() % num_reaction_range + nconfig->min_num_reactions;
+void SetRandomNetwork(Network_Ptr network, Config_Ptr config) {
+	int num_reaction_range = config->max_num_reactions - config->min_num_reactions;
+	network->num_reactions = rand() % num_reaction_range + config->min_num_reactions;
 	for (int i = 0; i < network->num_reactions; i++) {
-			SetRandomReaction(&network->reactions[i], nconfig->rconfig);
+			SetRandomReaction(&network->reactions[i], config);
 	}
 }
 
@@ -32,27 +32,27 @@ void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions) 
 	}
 }
 
-void MutateNetwork(Network_Ptr network, Config_Ptr nconfig) {
+void MutateNetwork(Network_Ptr network, Config_Ptr config) {
 	float mutation = (float) rand() / RAND_MAX;
 	bool network_changed = false;
 
-	if ((mutation -= nconfig->prob_add_reaction) <= 0) {
-			network_changed = AddReaction(network, nconfig);
-	} else if ((mutation -= nconfig->prob_remove_reaction) <= 0) {
+	if ((mutation -= config->prob_add_reaction) <= 0) {
+			network_changed = AddReaction(network, config);
+	} else if ((mutation -= config->prob_remove_reaction) <= 0) {
 			network_changed = RemoveReaction(network);
 	}
 
 	if (mutation > 0 || network_changed == false) {
-			ModifyRateConstant(network, nconfig);
+			ModifyRateConstant(network, config);
 	}
 }
 
-bool AddReaction(Network_Ptr network, Config_Ptr nconfig) {
+bool AddReaction(Network_Ptr network, Config_Ptr config) {
 	if (network->num_reactions == MAX_NUM_REACTIONS) {
 			return false;
 	}
 
-	SetRandomReaction(&network->reactions[network->num_reactions], nconfig->rconfig);
+	SetRandomReaction(&network->reactions[network->num_reactions], config);
 	network->num_reactions++;
 	return true;
 }
@@ -65,11 +65,11 @@ bool RemoveReaction(Network_Ptr network) {
 	return true;
 }
 
-void ModifyRateConstant(Network_Ptr network, Config_Ptr nconfig) {
+void ModifyRateConstant(Network_Ptr network, Config_Ptr config) {
 	if (network->num_reactions < 1) {
 			return;
 	}
 
 	int reaction_to_change = rand() % network->num_reactions;
-	MutateRateConstant(&network->reactions[reaction_to_change], nconfig->rconfig);
+	MutateRateConstant(&network->reactions[reaction_to_change], config);
 }

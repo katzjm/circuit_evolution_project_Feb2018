@@ -28,9 +28,7 @@ typedef struct network_str {
 //      network - Pointer to the network to fill with reactions
 //      nconfig - Pointer to a struct containing Network configuration
 //                parameters. See Config.h
-//      rconfig - Pointer to a struct containing Reaction configuration
-//                parameters. See Config.h
-void SetRandomNetwork(Network_Ptr network, NConfig_Ptr nconfig);
+void SetRandomNetwork(Network_Ptr network, Config_Ptr nconfig);
 
 // Fills the given Network with copies of the Reactions in reactions
 //
@@ -51,7 +49,7 @@ void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions);
 //      network - Pointer to the network to mutate
 //      nconfig - Pointer to a struct containing Network configuration
 //                parameters. See Config.h
-void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig);
+void MutateNetwork(Network_Ptr network, Config_Ptr nconfig);
 
 // Adds a reaction to the given network
 //
@@ -62,7 +60,7 @@ void MutateNetwork(Network_Ptr network, NConfig_Ptr nconfig);
 //
 // Returns:
 //      true if a Reaction was successfully added, false otherwise
-bool AddReaction(Network_Ptr network, NConfig_Ptr nconfig);
+bool AddReaction(Network_Ptr network, Config_Ptr nconfig);
 
 // Removes a reaction from the given network
 //
@@ -79,6 +77,6 @@ bool RemoveReaction(Network_Ptr network);
 //      network - Pointer to the network to add a reaction to
 //      nconfig - Pointer to a struct containing Network configuration
 //                parameters. See Config.h
-void ModifyRateConstant(Network_Ptr network, NConfig_Ptr nconfig);
+void ModifyRateConstant(Network_Ptr network, Config_Ptr nconfig);
 
 #endif // _NETWORK_H_
