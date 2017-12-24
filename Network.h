@@ -17,8 +17,8 @@
 
 // Memory block for maintaining a network of Reactions
 typedef struct network_str {
-    Reaction reactions[MAX_NUM_REACTIONS];
-    int num_reactions;
+  Reaction reactions[MAX_NUM_REACTIONS];
+  int num_reactions;
 } Network, *Network_Ptr;
 
 // Fills the given network with a random number of random reactions with
@@ -36,9 +36,12 @@ void SetRandomNetwork(Network_Ptr network, Config_Ptr nconfig);
 //      network - Pointer to the network to fill with reactions
 //      reactions - Pointer to an array of reactions copy to network
 //      num_reactions - The number of reactions in the given reaction array.
-//                      Note that if this is greater than MAX_NUM_REACTIONS than
-//                      only the first MAX_NUM_REACTIONS are copied into network
-void SetNetwork(Network_Ptr network, Reaction_Ptr reactions, int num_reactions);
+//                      Note that if this is greater than MAX_NUM_REACTIONS
+//                      than only the first MAX_NUM_REACTIONS are copied into
+//                      network
+void SetNetwork(Network_Ptr network,
+                Reaction_Ptr reactions,
+                int num_reactions);
 
 // Alters the given Network. The Network may have a Reaction added, taken away,
 // or have a rate contoustant changed, with the probability of each mutation
