@@ -8,13 +8,40 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 #include "Configs.h"
+
+static Config defaults;
+
+static void SetDefaultConfigs() {
+  defaults.fit_threshold = 0.1;
+  defaults.max_num_generations = 1000;
+  defaults.max_num_reactions = 20;
+  defaults.max_percent_rate_change = 0.1;
+  defaults.max_pop_size = 100;
+  defaults.max_rate_constant = 50;
+  defaults.min_num_reactions = 2;
+  defaults.num_data_pts = 10;
+  defaults.num_species = 10;
+  defaults.output_interval = 10;
+  defaults.percent_to_clone = 0.5;
+  defaults.prob_add_reaction = 0.25;
+  defaults.prob_remove_reaction = 0.25;
+  defaults.prob_rate_change = 0.5;
+  defaults.prob_uni_uni = 0.25;
+  defaults.prob_uni_bi = 0.25;
+  defaults.prob_bi_uni = 0.25; 
+  defaults.prob_bi_bi = 0.25;
+  defaults.seed = time(NULL);
+  defaults.show_cvode_errors = false;
+  defaults.time_based = false;
+}
 
 static int GetConfig(FILE *f, char *config_name, double *config_val) {
   char buf[128];
   if (fgets(buf, 128, f) == NULL) {
-    return 1;   
+    return 1;
   }
   if (sscanf(buf, "%s %lf", config_name, config_val) != 2) {
     return 1;
@@ -24,7 +51,8 @@ static int GetConfig(FILE *f, char *config_name, double *config_val) {
 
 static void SetConfig(Config_Ptr c, char *config_name, double config_val) {
   if (config_val < 0) {
-    printf("Default value used for %s\n", config_name);   
+    printf("Default value used for %s\n", config_name);
+    return;
   }
 
   if (strcmp(config_name, "maxNumberOfGenerations") == 0) {
@@ -72,33 +100,52 @@ static void SetConfig(Config_Ptr c, char *config_name, double config_val) {
 
 static void ValidateConfigs(Config_Ptr c) {
   double max_err = 1e10;
-  if (fabs(c->prob_uni_uni
-           + c->prob_uni_bi
-           + c->prob_bi_uni
+  if (fabs(c->prob_uni_uni + c->prob_uni_bi + c->prob_bi_uni
            + c->prob_bi_bi - 1) > max_err) {
     printf("Defauts used for reaction type probabilites\n");
-  } else if (c->percent_to_clone > 1) {
+    c->prob_uni_uni = defaults.prob_uni_uni;
+    c->prob_uni_bi = defaults.prob_uni_bi;
+    c->prob_bi_uni = defaults.prob_bi_uni;
+    c->prob_bi_bi = defaults.prob_bi_bi;
+  }
+  
+  if (c->percent_to_clone > 1) {
     printf("Default used for percentageClone");
-  } else if (fabs(c->prob_add_reaction
-                  + c->prob_remove_reaction
-                  + c->prob_rate_change - 1) > max_err) {
+    c->percent_to_clone = defaults.percent_to_clone;
+  }
+  
+  if (fabs(c->prob_add_reaction + c->prob_remove_reaction + c->prob_rate_change
+           - 1) > max_err) {
+    printf("Defaults used for mutation probabilites\n");
+    c->prob_add_reaction = defaults.prob_add_reaction;
+    c->prob_remove_reaction = defaults.prob_remove_reaction;
+    c->prob_rate_change = defaults.prob_rate_change;
+  }
 
+  if (c->max_num_reactions < c->min_num_reactions) {
+    printf("Defaults used for the range of reactions per network");
+    c->max_num_reactions = defaults.max_num_reactions;
+    c->min_num_reactions = defaults.min_num_reactions;
   }
 }
 
-int Configure(Config_Ptr c) {
+void Configure(Config_Ptr c) {
+  SetDefaultConfigs();
+  *c = defaults;
+
+  printf("Attempting to configure evolver...");
   FILE *f = fopen("setup.txt", "r");
   if (f == NULL) {
-    perror("setup.txt could not be found");
-    return 1;
+    printf("setup.txt could not be found. Using all defaults");
+    return;
   }
-  
+
   char config_name[128];
   double config_val;
   while (GetConfig(f, config_name, &config_val) == 0) {
     SetConfig(c, config_name, config_val);
   }
-  
+
   fclose(f);
-  return 0;
+  printf("Configuration successful");
 }

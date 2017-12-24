@@ -37,5 +37,5 @@ typedef struct config_str {
 } Config, *Config_Ptr;
 
 
-int Configure();
+void Configure(Config_Ptr c);
 #endif // _CONFIG_H_
