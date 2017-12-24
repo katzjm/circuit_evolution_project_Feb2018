@@ -10,7 +10,7 @@
 #include "Reaction.h"
 #include "Configs.h"
 
-void SetRandomReaction(Reaction_Ptr reaction, RConfig_Ptr config) {
+void SetRandomReaction(Reaction_Ptr reaction, Config_Ptr config) {
     float reaction_type = (float) rand() / RAND_MAX;
     if ((reaction_type -= config->prob_uni_uni) <= 0) {
         SetRandomUniUni(reaction, config);
@@ -25,17 +25,17 @@ void SetRandomReaction(Reaction_Ptr reaction, RConfig_Ptr config) {
 
 // Returns a rate constant according to user-defined parameters.
 // See Config.h
-static float GetRateConstant(RConfig_Ptr config) {
+static float GetRateConstant(Config_Ptr config) {
     return fmod(rand(), config->max_rate_constant);
 }
 
 // Returns a reagent according to user-defined parameters.
 // See Config.h
-static int GetReagent(RConfig_Ptr config) {
-    return rand() % config->num_reagents;
+static int GetReagent(Config_Ptr config) {
+    return rand() % config->num_species;
 }
 
-void SetRandomUniUni(Reaction_Ptr reaction, RConfig_Ptr config) {
+void SetRandomUniUni(Reaction_Ptr reaction, Config_Ptr config) {
     reaction->reactant_1 = GetReagent(config);
     reaction->reactant_2 = NO_REAGENT;
     reaction->product_1 = GetReagent(config);
@@ -43,7 +43,7 @@ void SetRandomUniUni(Reaction_Ptr reaction, RConfig_Ptr config) {
     reaction->rate_constant = GetRateConstant(config);
 }
 
-void SetRandomBiUni(Reaction_Ptr reaction, RConfig_Ptr config) {
+void SetRandomBiUni(Reaction_Ptr reaction, Config_Ptr config) {
     reaction->reactant_1 = GetReagent(config);
     reaction->reactant_2 = GetReagent(config);
     reaction->product_1 = GetReagent(config);
@@ -51,7 +51,7 @@ void SetRandomBiUni(Reaction_Ptr reaction, RConfig_Ptr config) {
     reaction->rate_constant = GetRateConstant(config);
 }
 
-void SetRandomUniBi(Reaction_Ptr reaction, RConfig_Ptr config) {
+void SetRandomUniBi(Reaction_Ptr reaction, Config_Ptr config) {
     reaction->reactant_1 = GetReagent(config);
     reaction->reactant_2 = NO_REAGENT;
     reaction->product_1 = GetReagent(config);
@@ -59,7 +59,7 @@ void SetRandomUniBi(Reaction_Ptr reaction, RConfig_Ptr config) {
     reaction->rate_constant = GetRateConstant(config);
 }
 
-void SetRandomBiBi(Reaction_Ptr reaction, RConfig_Ptr config) {
+void SetRandomBiBi(Reaction_Ptr reaction, Config_Ptr config) {
     reaction->reactant_1 = GetReagent(config);
     reaction->reactant_2 = GetReagent(config);
     reaction->product_1 = GetReagent(config);
@@ -81,7 +81,7 @@ void SetReaction(Reaction_Ptr reaction,
     reaction->rate_constant = rate_constant;
 }
 
-void MutateRateConstant(Reaction_Ptr reaction, RConfig_Ptr config) {
+void MutateRateConstant(Reaction_Ptr reaction, Config_Ptr config) {
     float percent_change = fmod(rand(), config->max_percent_rate_change);
     int change_direction = rand() % 2 == 0 ? 1 : -1;
     reaction->rate_constant *= percent_change * change_direction;
