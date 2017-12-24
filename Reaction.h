@@ -15,11 +15,11 @@ typedef int species_t;
 typedef float rate_t;
 
 typedef struct reaction_str {
-    species_t reactant_1;
-    species_t reactant_2;
-    species_t product_1;
-    species_t product_2;
-    rate_t rate_constant;
+  species_t reactant_1;
+  species_t reactant_2;
+  species_t product_1;
+  species_t product_2;
+  rate_t rate_constant;
 } Reaction, *Reaction_Ptr;
 
 // Returns a Reaction with either one or two reactants and either one or
