@@ -11,29 +11,29 @@
 #include <stdbool.h>
 
 typedef struct config_str {
-    double max_rate_constant;
-    double max_percent_rate_change;
-    double prob_uni_uni;
-    double prob_uni_bi;
-    double prob_bi_uni;
-    double prob_bi_bi;
-    double prob_add_reaction;
-    double prob_remove_reaction;
-    double prob_rate_change;
-    double percent_to_clone;
-    double fit_threshold;
+  double max_rate_constant;
+  double max_percent_rate_change;
+  double prob_uni_uni;
+  double prob_uni_bi;
+  double prob_bi_uni;
+  double prob_bi_bi;
+  double prob_add_reaction;
+  double prob_remove_reaction;
+  double prob_rate_change;
+  double percent_to_clone;
+  double fit_threshold;
 
-    int seed;
-    int max_num_generations;
-    int max_pop_size;
-    int num_species;
-    int max_num_reactions;
-    int min_num_reactions;
-    int output_interval;
-    int num_data_pts;
+  int seed;
+  int max_num_generations;
+  int max_pop_size;
+  int num_species;
+  int max_num_reactions;
+  int min_num_reactions;
+  int output_interval;
+  int num_data_pts;
 
-    bool show_cvode_errors;
-    bool time_based;
+  bool show_cvode_errors;
+  bool time_based;
 } Config, *Config_Ptr;
 
 
