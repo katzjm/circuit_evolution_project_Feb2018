@@ -31,7 +31,7 @@ static void SetDefaultConfigs() {
   defaults.prob_rate_change = 0.5;
   defaults.prob_uni_uni = 0.25;
   defaults.prob_uni_bi = 0.25;
-  defaults.prob_bi_uni = 0.25; 
+  defaults.prob_bi_uni = 0.25;
   defaults.prob_bi_bi = 0.25;
   defaults.seed = time(NULL);
   defaults.show_cvode_errors = false;
@@ -108,12 +108,12 @@ static void ValidateConfigs(Config_Ptr c) {
     c->prob_bi_uni = defaults.prob_bi_uni;
     c->prob_bi_bi = defaults.prob_bi_bi;
   }
-  
+
   if (c->percent_to_clone > 1) {
     printf("Default used for percentageClone");
     c->percent_to_clone = defaults.percent_to_clone;
   }
-  
+
   if (fabs(c->prob_add_reaction + c->prob_remove_reaction + c->prob_rate_change
            - 1) > max_err) {
     printf("Defaults used for mutation probabilites\n");
@@ -129,12 +129,18 @@ static void ValidateConfigs(Config_Ptr c) {
   }
 }
 
-void Configure(Config_Ptr c) {
+void Configure(Config_Ptr c, char *file_name) {
   SetDefaultConfigs();
   *c = defaults;
 
   printf("Attempting to configure evolver...");
-  FILE *f = fopen("setup.txt", "r");
+
+  FILE *f;
+  if (file_name == NULL) {
+    f = fopen(file_name, "r");
+  } else {
+    f = fopen("setup.txt", "r");
+  }
   if (f == NULL) {
     printf("setup.txt could not be found. Using all defaults");
     return;
@@ -145,6 +151,8 @@ void Configure(Config_Ptr c) {
   while (GetConfig(f, config_name, &config_val) == 0) {
     SetConfig(c, config_name, config_val);
   }
+
+  srand(c->seed);
 
   fclose(f);
   printf("Configuration successful");
