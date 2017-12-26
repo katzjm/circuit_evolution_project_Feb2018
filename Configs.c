@@ -41,9 +41,11 @@ static void SetDefaultConfigs() {
 static int GetConfig(FILE *f, char *config_name, double *config_val) {
   char buf[128];
   if (fgets(buf, 128, f) == NULL) {
+    printf("  Configuration file read\n");
     return 1;
   }
   if (sscanf(buf, "%s %lf", config_name, config_val) != 2) {
+    printf("  file could not be read to completion\n");
     return 1;
   }
   return 0;
