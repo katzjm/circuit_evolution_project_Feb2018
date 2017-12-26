@@ -11,7 +11,7 @@
 
 #include <stdbool.h>
 #include "Reaction.h"
-#include "Config.h"
+#include "Configs.h"
 
 #define MAX_NUM_REACTIONS 20
 

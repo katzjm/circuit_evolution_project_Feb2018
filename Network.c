@@ -11,7 +11,7 @@
 
 #include "Network.h"
 #include "Reaction.h"
-#include "Config.h"
+#include "Configs.h"
 
 void SetRandomNetwork(Network_Ptr network, Config_Ptr config) {
   int reaction_range = config->max_num_reactions - config->min_num_reactions;
