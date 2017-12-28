@@ -9,6 +9,7 @@ extern "C" {
 }
 
 #include "test_configs.h"
+#include <ctime>
 
 namespace evolvertest {
 
@@ -35,13 +36,6 @@ TEST_F(Test_Configs, TestDefaultConfiguration) {
   EXPECT_GT(test_config.seed, 0);
   EXPECT_EQ(test_config.show_cvode_errors, false);
   EXPECT_EQ(test_config.time_based, false);
-
-  int prev_seed = test_config.seed;
-  for (int i = 0; i < 10; i++) {
-    Configure(&test_config, NULL);
-    EXPECT_NE(prev_seed, test_config.seed);
-    prev_seed = test_config.seed;
-  }
 }
 
 TEST_F(Test_Configs, TestUserSetupConfiguration) {

@@ -29,6 +29,8 @@ TEST_F(Test_Reaction, TestRandomReaction) {
     EXPECT_LT(reaction.reactant_2, c.num_species);
     EXPECT_GE(reaction.product_2, -1);
     EXPECT_LT(reaction.product_2, c.num_species);
+    EXPECT_LT(reaction.rate_constant, 50);
+    EXPECT_GE(reaction.rate_constant, 0);
 
     if (reaction.reactant_2 == -1 && reaction.product_2 == -1) {
       num_uni_uni++;
@@ -51,6 +53,17 @@ TEST_F(Test_Reaction, TestRandomReaction) {
   EXPECT_GT(num_uni_bi, 100);
   EXPECT_GT(num_bi_uni, 100);
   EXPECT_GT(num_bi_bi, 100);
+}
+
+TEST_F(Test_Reaction, TestMutateRateConstant) {
+  int num_increases = 0;
+  int num_decreases = 0;
+
+  SetRandomReaction(&reaction, &c);
+  double prev_rate_constant = reaction.rate_constant
+  for (int i = 0; i < 1000; i++) {
+    
+  }
 }
 
 }  // evolvertest
