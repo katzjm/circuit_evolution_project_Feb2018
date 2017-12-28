@@ -9,6 +9,8 @@ extern "C" {
   #include "Configs.h"
 }
 
+#include "test_Reaction.h"
+
 namespace evolvertest {
 
 TEST_F(Test_Reaction, TestRandomReaction) {
@@ -39,6 +41,12 @@ TEST_F(Test_Reaction, TestRandomReaction) {
     }
   }
 
+  printf("After 1000 reactions of equal type probability, there were:\n");
+  printf("  %d uni uni reactions\n", num_uni_uni);
+  printf("  %d uni bi reactions\n", num_uni_bi);
+  printf("  %d bi uni reactions\n", num_bi_uni);
+  printf("  %d bi bi reactions\n", num_bi_bi);
+
   EXPECT_GT(num_uni_uni, 100);
   EXPECT_GT(num_uni_bi, 100);
   EXPECT_GT(num_bi_uni, 100);
@@ -46,3 +54,4 @@ TEST_F(Test_Reaction, TestRandomReaction) {
 }
 
 }  // evolvertest
+

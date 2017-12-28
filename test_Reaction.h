@@ -18,11 +18,11 @@ namespace evolvertest {
 
 class Test_Reaction : public ::testing::Test {
  protected:
-  Test_Configs() {
+  Test_Reaction() {
     Configure(&c, NULL);
   }
 
-  virtual ~Test_Configs() {}
+  virtual ~Test_Reaction() {}
 
 //  virtual void SetUp() {}
 
@@ -31,6 +31,8 @@ class Test_Reaction : public ::testing::Test {
   Config c;
   Reaction reaction;
 
-} // evolvertest
+};  // Test_Reaction
+
+}  // evolvertest
 
 #endif // _EVOLVER_TEST_REACTION_H_

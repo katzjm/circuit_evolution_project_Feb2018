@@ -144,12 +144,14 @@ void Configure(Config_Ptr c, const char *file_name) {
     f = fopen(file_name, "r");
   } else {
     printf("  Using all defaults\nConfiguration successful\n");
+    srand(c->seed);
     return;
   }
   if (f == NULL) {
     printf("  %s could not be found. Using all defaults\n",
            file_name == NULL ? "setup.txt" : file_name);
     printf("Configuration successful\n");
+    srand(c->seed);
     return;
   }
 

@@ -12,7 +12,7 @@ CPPUNITFLAGS = -L./gtest -lgtest
 # define common dependencies
 OBJS = Reaction.o Network.o Configs.o
 HEADERS = Reaction.h Network.h Configs.h
-TESTOBJS = test_configs.o test_suite.o
+TESTOBJS = test_configs.o test_Reaction.o test_suite.o
 TESTHEADERS = test_configs.h test_reaction.h
 
 # compile everything
