@@ -53,7 +53,7 @@ static int GetConfig(FILE *f, char *config_name, double *config_val) {
 
 static void SetConfig(Config_Ptr c, char *config_name, double config_val) {
   if (config_val < 0) {
-    printf("Default value used for %s\n", config_name);
+    printf("  Default value used for %s\n", config_name);
     return;
   }
 
@@ -97,14 +97,16 @@ static void SetConfig(Config_Ptr c, char *config_name, double config_val) {
     c->max_percent_rate_change = config_val;
   } else if (strcmp(config_name, "timeBased") == 0) {
     c->time_based = config_val;
+  } else if (strcmp(config_name, "maxInitialRateConstant") == 0) {
+    c->max_rate_constant = config_val;
   }
 }
 
 static void ValidateConfigs(Config_Ptr c) {
-  double max_err = 1e10;
+  double max_err = 1e-10;
   if (fabs(c->prob_uni_uni + c->prob_uni_bi + c->prob_bi_uni
            + c->prob_bi_bi - 1) > max_err) {
-    printf("Defauts used for reaction type probabilites\n");
+    printf("  Defauts used for reaction type probabilites\n");
     c->prob_uni_uni = defaults.prob_uni_uni;
     c->prob_uni_bi = defaults.prob_uni_bi;
     c->prob_bi_uni = defaults.prob_bi_uni;
@@ -112,20 +114,20 @@ static void ValidateConfigs(Config_Ptr c) {
   }
 
   if (c->percent_to_clone > 1) {
-    printf("Default used for percentageClone");
+    printf("  Default used for percentageClone\n");
     c->percent_to_clone = defaults.percent_to_clone;
   }
 
   if (fabs(c->prob_add_reaction + c->prob_remove_reaction + c->prob_rate_change
            - 1) > max_err) {
-    printf("Defaults used for mutation probabilites\n");
+    printf("  Defaults used for mutation probabilites\n");
     c->prob_add_reaction = defaults.prob_add_reaction;
     c->prob_remove_reaction = defaults.prob_remove_reaction;
     c->prob_rate_change = defaults.prob_rate_change;
   }
 
   if (c->max_num_reactions < c->min_num_reactions) {
-    printf("Defaults used for the range of reactions per network");
+    printf("  Defaults used for the range of reactions per network\n");
     c->max_num_reactions = defaults.max_num_reactions;
     c->min_num_reactions = defaults.min_num_reactions;
   }

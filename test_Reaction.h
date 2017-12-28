@@ -1,40 +1,36 @@
 /*
- * Test that Reaction has the intended functionality
+ * Tests that Reaction works correctly
  *
  * Author: Josh Katz
  */
 
-#include <cassert>
-#include <iostream>
+#ifndef _EVOLVER_TEST_REACTION_H_
+#define _EVOLVER_TEST_REACTION_H_
+
+#include "gtest/gtest.h"
 
 extern "C" {
-    #include "Reaction.h"
-    #include "Configs.h"
+  #include "Reaction.h"
+  #include "Configs.h"
 }
 
-namespace test {
+namespace evolvertest {
 
-class Test_Reaction {
+class Test_Reaction : public ::testing::Test {
+ protected:
+  Test_Configs() {
+    Configure(&c, NULL);
+  }
 
-    // Test that Random Reactions can be made using config parameters
-    void testRandomReactionCreation() {
-        RConfig config;
-        config.num_reagents = 10;
-        config.prob_uni_uni = 0.25;
-        config.prob_uni_bi = 0.25;
-        config.prob_bi_uni = 0.25;
-        config.prob_bi_bi = 0.25;
-        config.max_rate_constant = 50;
+  virtual ~Test_Configs() {}
 
-        Reaction reac;
-        for (int i = 0; i < 1000; i++) {
-            SetRandomReaction(reac, config);
-            
-        }
-    }
+//  virtual void SetUp() {}
 
-    
+//  virtual void TearDown() {}
 
-} // Test_Reaction
+  Config c;
+  Reaction reaction;
 
-} // test
+} // evolvertest
+
+#endif // _EVOLVER_TEST_REACTION_H_
