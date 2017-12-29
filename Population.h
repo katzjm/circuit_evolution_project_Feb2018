@@ -7,19 +7,18 @@
 #ifndef _POPULATION_H_
 #define _POPULATION_H_
 
-#include "Reaction.h"
 #include "Network.h"
-#include "Config.h"
+#include "Configs.h"
 
 typedef struct population_str {
     Network_Ptr networks;
     int num_networks;
 } Population, *Population_Ptr;
 
-Population_Ptr GetRandomPopulation(Config_Ptr pconfig);
+int SetRandomPopulation(Population_Ptr pop, Config_Ptr config);
 
 void KillPopulation(Population_Ptr pop);
 
-Population_Ptr GetNextGeneration(Population_Ptr pop);
+int SetNextGeneration(Population_Ptr pop);
 
 #endif // _POPULATION_H_
