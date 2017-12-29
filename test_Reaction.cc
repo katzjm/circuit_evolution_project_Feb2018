@@ -60,10 +60,30 @@ TEST_F(Test_Reaction, TestMutateRateConstant) {
   int num_decreases = 0;
 
   SetRandomReaction(&reaction, &c);
-  double prev_rate_constant = reaction.rate_constant
+  double prev_rate_constant = reaction.rate_constant;
   for (int i = 0; i < 1000; i++) {
-    
+    MutateRateConstant(&reaction, &c);
+    EXPECT_GT(reaction.rate_constant, 0);
+
+    // Note that it's ok for the new rate constant to be the same
+    // as the old, so long that it happens infrequently. Failing this
+    // test a few times in a thousand attempts should be fine
+    EXPECT_NE(reaction.rate_constant, prev_rate_constant);
+
+    if (reaction.rate_constant > prev_rate_constant) {
+      num_increases++;
+      EXPECT_LT(reaction.rate_constant - prev_rate_constant,
+                prev_rate_constant * c.max_percent_rate_change);
+    } else if (reaction.rate_constant < prev_rate_constant) {
+      num_decreases++;
+      EXPECT_LT(prev_rate_constant - reaction.rate_constant,
+                prev_rate_constant * c.max_percent_rate_change);
+    }
+    prev_rate_constant = reaction.rate_constant;
   }
+
+  EXPECT_GT(num_increases, 0);
+  EXPECT_GT(num_decreases, 0);
 }
 
 }  // evolvertest

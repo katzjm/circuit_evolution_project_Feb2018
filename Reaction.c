@@ -82,7 +82,8 @@ void SetReaction(Reaction_Ptr reaction,
 }
 
 void MutateRateConstant(Reaction_Ptr reaction, Config_Ptr config) {
-  float percent_change = fmod(rand(), config->max_percent_rate_change);
+  float percent_change = fmod(10 * (float) rand() / RAND_MAX,
+                              config->max_percent_rate_change);
   int change_direction = rand() % 2 == 0 ? 1 : -1;
-  reaction->rate_constant *= percent_change * change_direction;
+  reaction->rate_constant *= (1 + percent_change * change_direction);
 }
