@@ -9,7 +9,7 @@
 #include "Population.h"
 #include "Configs.h"
 
-int SetRandomPopulation(Population_Ptr pop, Config_Ptr config) {
+int SetFirstGeneration(Population_Ptr pop, Config_Ptr config) {
   pop->num_networks = config->max_pop_size;
   pop->networks = (Network_Ptr) malloc(sizeof(Network) * pop->num_networks);
 

@@ -15,7 +15,15 @@ typedef struct population_str {
     int num_networks;
 } Population, *Population_Ptr;
 
-int SetRandomPopulation(Population_Ptr pop, Config_Ptr config);
+int SetFirstGeneration(Population_Ptr pop, Config_Ptr config);
+
+double BestFitness(Population_Ptr pop);
+
+void EvaluateGeneration(Population_Ptr pop, Config_Ptr c);
+
+void PrintSmallStatus(Population_Ptr pop);
+
+void PrintLargeStatus(Population_Ptr pop);
 
 void KillPopulation(Population_Ptr pop);
 
