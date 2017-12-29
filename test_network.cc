@@ -22,7 +22,7 @@ TEST_F(Test_Network, TestRandomNetworkSetting) {
     EXPECT_LE(network.num_reactions, 20);
 
     // Test that the final memory block can be accessed
-    rate_t rate = network.reactions[network.num_reactions - 1];
+    rate_t rate = network.reactions[network.num_reactions - 1].rate_constant;
     EXPECT_GE(rate, 0);
     EXPECT_LE(rate, 50);
   }
