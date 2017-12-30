@@ -18,6 +18,7 @@
 // Memory block for maintaining a network of Reactions
 typedef struct network_str {
   Reaction reactions[MAX_NUM_REACTIONS];
+  double fitness;
   int num_reactions;
 } Network, *Network_Ptr;
 
@@ -41,6 +42,7 @@ void SetRandomNetwork(Network_Ptr network, Config_Ptr nconfig);
 //                      network
 void SetNetwork(Network_Ptr network,
                 Reaction_Ptr reactions,
+                double fitness,
                 int num_reactions);
 
 // Alters the given Network. The Network may have a Reaction added, taken away,

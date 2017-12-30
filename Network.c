@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "Network.h"
 #include "Reaction.h"
@@ -16,6 +17,7 @@
 void SetRandomNetwork(Network_Ptr network, Config_Ptr config) {
   int reaction_range = config->max_num_reactions - config->min_num_reactions;
   network->num_reactions = rand() % reaction_range + config->min_num_reactions;
+  network->fitness = INFINITY;
   for (int i = 0; i < network->num_reactions; i++) {
     SetRandomReaction(&network->reactions[i], config);
   }
@@ -27,8 +29,10 @@ void SetRandomNetwork(Network_Ptr network, Config_Ptr config) {
 
 void SetNetwork(Network_Ptr network,
                 Reaction_Ptr reactions,
+                double fitness,
                 int num_reactions) {
   network->num_reactions = min(num_reactions, MAX_NUM_REACTIONS);
+  network->fitness = fitness;
   for (int i = 0; i < network->num_reactions; i++) {
     network->reactions[i] = reactions[i];
   }
