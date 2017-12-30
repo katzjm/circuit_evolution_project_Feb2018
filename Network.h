@@ -27,15 +27,16 @@ typedef struct network_str {
 //
 // Parameters:
 //      network - Pointer to the network to fill with reactions
-//      nconfig - Pointer to a struct containing Network configuration
+//      config - Pointer to a struct containing Network configuration
 //                parameters. See Config.h
-void SetRandomNetwork(Network_Ptr network, Config_Ptr nconfig);
+void SetRandomNetwork(Network_Ptr network, Config_Ptr config);
 
 // Fills the given Network with copies of the Reactions in reactions
 //
 // Parameters:
 //      network - Pointer to the network to fill with reactions
 //      reactions - Pointer to an array of reactions copy to network
+//      fitness - The assigned fitness of the network
 //      num_reactions - The number of reactions in the given reaction array.
 //                      Note that if this is greater than MAX_NUM_REACTIONS
 //                      than only the first MAX_NUM_REACTIONS are copied into
@@ -52,20 +53,20 @@ void SetNetwork(Network_Ptr network,
 //
 // Parameters:
 //      network - Pointer to the network to mutate
-//      nconfig - Pointer to a struct containing Network configuration
+//      config - Pointer to a struct containing Network configuration
 //                parameters. See Config.h
-void MutateNetwork(Network_Ptr network, Config_Ptr nconfig);
+void MutateNetwork(Network_Ptr network, Config_Ptr config);
 
 // Adds a reaction to the given network
 //
 // Parameters:
 //      network - Pointer to the network to add a reaction to
-//      nconfig - Pointer to a struct containing Network configuration
+//      config - Pointer to a struct containing Network configuration
 //                parameters. See Config.h
 //
 // Returns:
 //      true if a Reaction was successfully added, false otherwise
-bool AddReaction(Network_Ptr network, Config_Ptr nconfig);
+bool AddReaction(Network_Ptr network, Config_Ptr config);
 
 // Removes a reaction from the given network
 //
@@ -82,6 +83,8 @@ bool RemoveReaction(Network_Ptr network);
 //      network - Pointer to the network to add a reaction to
 //      nconfig - Pointer to a struct containing Network configuration
 //                parameters. See Config.h
-void ModifyRateConstant(Network_Ptr network, Config_Ptr nconfig);
+void ModifyRateConstant(Network_Ptr network, Config_Ptr config);
+
+int EvaluateNetwork(Network_Ptr network, Config_Ptr c);
 
 #endif // _NETWORK_H_

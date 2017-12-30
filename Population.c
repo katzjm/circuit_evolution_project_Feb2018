@@ -9,6 +9,12 @@
 #include "Population.h"
 #include "Configs.h"
 
+static int EvaluatePopulation(Population_Ptr pop) {
+  for (int i = 0; i < pop->num_networks; i++) {
+    EvaluateNetwork(&pop->networks[i]);
+  }
+}
+
 int SetFirstGeneration(Population_Ptr pop, Config_Ptr config) {
   pop->num_networks = config->max_pop_size;
   pop->network_order = (Network_Ptr*)
@@ -21,6 +27,7 @@ int SetFirstGeneration(Population_Ptr pop, Config_Ptr config) {
 
   for (int i = 0; i < pop->num_networks; i++) {
     SetRandomNetwork(&pop->networks[i], config);
+    pop->network_order[i] = &pop->networks[i];
   }
   return 0;
 }
@@ -34,5 +41,5 @@ void KillPopulation(Population_Ptr pop) {
 }
 
 int SetNextGeneration(Population_Ptr pop) {
-
+  
 }
