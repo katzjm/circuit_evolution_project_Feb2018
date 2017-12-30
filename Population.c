@@ -11,6 +11,8 @@
 
 int SetFirstGeneration(Population_Ptr pop, Config_Ptr config) {
   pop->num_networks = config->max_pop_size;
+  pop->network_order = (Network_Ptr*)
+                       malloc(sizeof(Network_Ptr) * pop->num_networks);
   pop->networks = (Network_Ptr) malloc(sizeof(Network) * pop->num_networks);
 
   if (pop->networks == NULL) {
@@ -25,7 +27,9 @@ int SetFirstGeneration(Population_Ptr pop, Config_Ptr config) {
 
 void KillPopulation(Population_Ptr pop) {
   free(pop->networks);
+  free(pop->network_order);
   pop->networks = NULL;
+  pop->network_order = NULL;
   pop->num_networks = 0;
 }
 

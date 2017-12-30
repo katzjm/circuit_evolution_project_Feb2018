@@ -38,8 +38,6 @@ int main(int argc, char **argv) {
       break;
     }
 
-    EvaluateGeneration(&pop, &c);
-
     if (i % c.output_interval == 0) {
       PrintSmallStatus(&pop);
     }
