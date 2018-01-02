@@ -81,3 +81,7 @@ void ModifyRateConstant(Network_Ptr network, Config_Ptr config) {
   int reaction_to_change = rand() % network->num_reactions;
   MutateRateConstant(&network->reactions[reaction_to_change], config);
 }
+
+int EvaluateNetwork(Network_Ptr network, Config_Ptr c) {
+
+}

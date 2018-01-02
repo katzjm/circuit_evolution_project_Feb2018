@@ -7,6 +7,7 @@
 #include <stdlib.h>    // for rand
 #include <assert.h>    // for assert
 #include <math.h>      // for fmod
+
 #include "Reaction.h"
 #include "Configs.h"
 
@@ -87,3 +88,14 @@ void MutateRateConstant(Reaction_Ptr reaction, Config_Ptr config) {
   int change_direction = rand() % 2 == 0 ? 1 : -1;
   reaction->rate_constant *= (1 + percent_change * change_direction);
 }
+
+double GetRateOfChange(Reaction_Ptr reaction, N_Vector concentrations) {
+  realtype *concentration_data = NV_DATA_S(concentrations);
+  double rate_of_change = reaction->rate_constant 
+                          * concentration_data[reaction->reactant_1];
+  if (reaction->reactant_2 != NO_REAGENT) {
+    rate_of_change *= concentration_data[reaction->reactant_2];
+  }
+  return rate_of_change;
+}
+
