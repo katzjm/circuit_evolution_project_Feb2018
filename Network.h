@@ -85,6 +85,10 @@ bool RemoveReaction(Network_Ptr network);
 //                parameters. See Config.h
 void ModifyRateConstant(Network_Ptr network, Config_Ptr config);
 
-int EvaluateNetwork(Network_Ptr network, Config_Ptr c);
+int EvaluateNetwork(Network_Ptr network,
+                    Config_Ptr c,
+                    N_Vector init_concentrations);
+
+void SetInitialConcentrations(N_Vector init_concentrations, Config_Ptr c);
 
 #endif // _NETWORK_H_

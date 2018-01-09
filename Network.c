@@ -10,6 +10,8 @@
 #include <stdbool.h>
 #include <math.h>
 
+#include "nvector/nvector_serial.h"
+
 #include "Network.h"
 #include "Reaction.h"
 #include "Configs.h"
@@ -82,6 +84,16 @@ void ModifyRateConstant(Network_Ptr network, Config_Ptr config) {
   MutateRateConstant(&network->reactions[reaction_to_change], config);
 }
 
-int EvaluateNetwork(Network_Ptr network, Config_Ptr c) {
+void SetInitialConcentrations(N_Vector init_concentrations, Config_Ptr c) {
+  realtype* init_concentrations_data = NV_DATA_S(init_concentrations);
 
+  for (int i = 0; i < c->num_species; i++) {
+    init_concentrations_data[i] = c->initial_concentrations;
+  }
+}
+
+int EvaluateNetwork(Network_Ptr network,
+                    Config_Ptr c,
+                    N_Vector init_concentrations) {
+  
 }
