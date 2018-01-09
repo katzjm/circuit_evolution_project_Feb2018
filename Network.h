@@ -10,15 +10,19 @@
 #define _NETWORK_H_
 
 #include <stdbool.h>
+
 #include "Reaction.h"
 #include "Configs.h"
 
 #define MAX_NUM_REACTIONS 20
+#define MAX_SPECIES 32
 
 // Memory block for maintaining a network of Reactions
 typedef struct network_str {
   Reaction reactions[MAX_NUM_REACTIONS];
   double fitness;
+  int sources;
+  int sinks;
   int num_reactions;
 } Network, *Network_Ptr;
 
@@ -89,6 +93,6 @@ int EvaluateNetwork(Network_Ptr network,
                     Config_Ptr c,
                     N_Vector init_concentrations);
 
-void SetInitialConcentrations(N_Vector init_concentrations, Config_Ptr c);
+N_Vector GetInitialConcentrations(Config_Ptr c);
 
 #endif // _NETWORK_H_

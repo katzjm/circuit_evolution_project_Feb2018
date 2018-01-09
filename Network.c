@@ -16,6 +16,33 @@
 #include "Reaction.h"
 #include "Configs.h"
 
+static void SetSourcesAndSinks(Network_Ptr network, Config_Ptr c) {
+  // Initially sources and sinks simply mark whether a species appears as a
+  // reactant or product, respectively. Mark no species initially 
+  network->sources = 0;
+  network->sinks = 0;
+
+  // Mark every species in every reaction
+  for (int i = 0; i < network->num_reactions; i++) {
+    Reaction_Ptr reaction = &network->reactions[i];
+
+    network->sources |= (1 << reaction->reactant_1);
+    network->sinks |= (1 << reaction->product_1);
+    if (reaction->reactant_2 != NO_REAGENT) {
+      network->sources |= (1 << reaction->reactant_2);
+    }
+    if (reaction->product_2 != NO_REAGENT) {
+      network->sinks |= (1 << reaction->product_2);
+    }
+  }
+
+  // If a species appears in both sources and sinks it is neither, so remove
+  // the mark for that species in both sources and sinks
+  int source_and_sink = network->sources & network->sinks;
+  network->sources |= ~source_and_sink;
+  network->sinks |= ~source_and_sink;
+}
+
 void SetRandomNetwork(Network_Ptr network, Config_Ptr config) {
   int reaction_range = config->max_num_reactions - config->min_num_reactions;
   network->num_reactions = rand() % reaction_range + config->min_num_reactions;
@@ -84,16 +111,35 @@ void ModifyRateConstant(Network_Ptr network, Config_Ptr config) {
   MutateRateConstant(&network->reactions[reaction_to_change], config);
 }
 
-void SetInitialConcentrations(N_Vector init_concentrations, Config_Ptr c) {
-  realtype* init_concentrations_data = NV_DATA_S(init_concentrations);
+N_Vector GetInitialConcentrations(Config_Ptr c) {
+  N_Vector init_concentrations = N_VNew_Serial(c->num_species);
+  realtype *init_concentrations_data = NV_DATA_S(init_concentrations);
 
   for (int i = 0; i < c->num_species; i++) {
     init_concentrations_data[i] = c->initial_concentrations;
   }
+
+  return init_concentrations;
+}
+
+static int EvaluateNetworkVsTime(Network_Ptr network, Config_Ptr c) {
+  double *species_fitness = malloc(sizeof(network->fitness) * c->num_species);
+  for (int i = 0; i < c->num_data_pts; i++) {
+    
+  }
+  free(species_fitness);
+}
+
+static int EvaluateNetworkVsConcentration() {
+
 }
 
 int EvaluateNetwork(Network_Ptr network,
                     Config_Ptr c,
                     N_Vector init_concentrations) {
-  
+  if (c->time_based) {
+
+  } else {
+
+  }
 }

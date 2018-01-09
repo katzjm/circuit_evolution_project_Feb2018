@@ -9,10 +9,15 @@
 #include "Population.h"
 #include "Configs.h"
 
-static int EvaluatePopulation(Population_Ptr pop) {
+static int EvaluatePopulation(Population_Ptr pop, Config_Ptr c) {
+  N_Vector concentrations = GetInitialConcentrations(c);
+
   for (int i = 0; i < pop->num_networks; i++) {
-    EvaluateNetwork(&pop->networks[i]);
+    EvaluateNetwork(&pop->networks[i], c, concentrations);
   }
+
+  N_VDestroy(concentrations);
+  return 0;
 }
 
 int SetFirstGeneration(Population_Ptr pop, Config_Ptr config) {
