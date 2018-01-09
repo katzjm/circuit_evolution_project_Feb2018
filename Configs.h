@@ -22,6 +22,7 @@ typedef struct config_str {
   double prob_rate_change;
   double percent_to_clone;
   double fit_threshold;
+  double initial_concentrations;
 
   int seed;
   int max_num_generations;

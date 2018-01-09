@@ -36,6 +36,7 @@ static void SetDefaultConfigs() {
   defaults.seed = time(NULL);
   defaults.show_cvode_errors = false;
   defaults.time_based = false;
+  defaults.initial_concentrations = 1.0;
 }
 
 static int GetConfig(FILE *f, char *config_name, double *config_val) {
@@ -98,6 +99,8 @@ static void SetConfig(Config_Ptr c, char *config_name, double config_val) {
   } else if (strcmp(config_name, "timeBased") == 0) {
     c->time_based = config_val;
   } else if (strcmp(config_name, "maxInitialRateConstant") == 0) {
+    c->max_rate_constant = config_val;
+  } else if (strcmp(config_name, "initialConcentrations") == 0) {
     c->max_rate_constant = config_val;
   }
 }

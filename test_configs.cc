@@ -34,6 +34,7 @@ TEST_F(Test_Configs, TestDefaultConfiguration) {
   EXPECT_EQ(test_config.prob_bi_uni, 0.25);
   EXPECT_EQ(test_config.prob_bi_bi, 0.25);
   EXPECT_GT(test_config.seed, 0);
+  EXPECT_EQ(test_config.initial_concentrations, 1.0);
   EXPECT_EQ(test_config.show_cvode_errors, false);
   EXPECT_EQ(test_config.time_based, false);
 }
@@ -59,6 +60,7 @@ TEST_F(Test_Configs, TestUserSetupConfiguration) {
   EXPECT_EQ(test_config.prob_bi_uni, 0.15);
   EXPECT_EQ(test_config.prob_bi_bi, 0.30);
   EXPECT_EQ(test_config.seed, 1508215203);
+  EXPECT_EQ(test_config.initial_concentrations, 5.0);
   EXPECT_EQ(test_config.show_cvode_errors, false);
   EXPECT_EQ(test_config.time_based, true);
 }

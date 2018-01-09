@@ -15,6 +15,7 @@ rateConstantMutation 0.5
 intervalForOutput 1
 fitnessThresholdToStop 0.001
 seed 1508215203
+initialConcentrations 5.0
 equationType 4
 showCVodeErrors 0
 numDataPoints 10
