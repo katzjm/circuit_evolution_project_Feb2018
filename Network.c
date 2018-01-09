@@ -16,7 +16,7 @@
 #include "Reaction.h"
 #include "Configs.h"
 
-static void SetSourcesAndSinks(Network_Ptr network, Config_Ptr c) {
+static void SetSourcesAndSinks(Network_Ptr network) {
   // Initially sources and sinks simply mark whether a species appears as a
   // reactant or product, respectively. Mark no species initially 
   network->sources = 0;
@@ -39,8 +39,16 @@ static void SetSourcesAndSinks(Network_Ptr network, Config_Ptr c) {
   // If a species appears in both sources and sinks it is neither, so remove
   // the mark for that species in both sources and sinks
   int source_and_sink = network->sources & network->sinks;
-  network->sources |= ~source_and_sink;
-  network->sinks |= ~source_and_sink;
+  network->sources &= ~source_and_sink;
+  network->sinks &= ~source_and_sink;
+}
+
+bool IsSource(Network_Ptr network, species_t species) {
+  return (network->sources & (1 << species)) != 0;
+}
+
+bool IsSink(Network_Ptr network, species_t species) {
+  return (network->sources & (1 << species)) != 0;
 }
 
 void SetRandomNetwork(Network_Ptr network, Config_Ptr config) {
@@ -50,6 +58,7 @@ void SetRandomNetwork(Network_Ptr network, Config_Ptr config) {
   for (int i = 0; i < network->num_reactions; i++) {
     SetRandomReaction(&network->reactions[i], config);
   }
+  SetSourcesAndSinks(network);
 }
 
 // Simple min function. Should not be used when either x or y need to be
@@ -65,6 +74,7 @@ void SetNetwork(Network_Ptr network,
   for (int i = 0; i < network->num_reactions; i++) {
     network->reactions[i] = reactions[i];
   }
+  SetSourcesAndSinks(network);
 }
 
 #undef min
@@ -91,6 +101,7 @@ bool AddReaction(Network_Ptr network, Config_Ptr config) {
 
   SetRandomReaction(&network->reactions[network->num_reactions], config);
   network->num_reactions++;
+  SetSourcesAndSinks(network);
   return true;
 }
 
@@ -99,6 +110,7 @@ bool RemoveReaction(Network_Ptr network) {
     return false;
   }
   network->num_reactions--;
+  SetSourcesAndSinks(network);
   return true;
 }
 
