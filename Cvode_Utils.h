@@ -16,7 +16,7 @@ typedef struct user_data_str {
 
 
 int SetUpCVodeInitial(void **cvode_mem,
-                      N_Vector se, //TODO rename
+                      N_Vector species_concentrations,
                       Data_Ptr data);
 
 int NetworkToOde(realtype t,

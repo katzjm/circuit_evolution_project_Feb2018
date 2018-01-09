@@ -11,6 +11,8 @@
 #include <stdbool.h>
 
 typedef struct config_str {
+  double inputs;
+  double outputs;
   double max_rate_constant;
   double max_percent_rate_change;
   double prob_uni_uni;
@@ -33,6 +35,7 @@ typedef struct config_str {
   int output_interval;
   int num_data_pts;
 
+  bool function_based;
   bool show_cvode_errors;
   bool time_based;
 } Config, *Config_Ptr;

@@ -141,8 +141,11 @@ N_Vector GetInitialConcentrations(Config_Ptr c) {
   return init_concentrations;
 }
 
-static int EvaluateNetworkVsTime(Network_Ptr network, Config_Ptr c) {
+static int EvaluateNetworkVsTime(Network_Ptr network,
+                                 Config_Ptr c,
+                                 N_Vector init_concentrations) {
   double *species_fitness = malloc(sizeof(network->fitness) * c->num_species);
+  realtype t = 0;
   for (int i = 0; i < c->num_data_pts; i++) {
     
   }
