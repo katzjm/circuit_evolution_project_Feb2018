@@ -60,8 +60,7 @@ int SetUpCVodeInitial(void **cvode_mem,
   }
 
   return 0;
-
-}
+}                                 
 
 int NetworkToOde(realtype t,
                  N_Vector concentrations,
@@ -69,8 +68,6 @@ int NetworkToOde(realtype t,
                  void *user_data) {
   Network_Ptr network = ((Data_Ptr) user_data)->network;
   Config_Ptr c = ((Data_Ptr) user_data)->config;
-  
-//TODO add something to deal with sources and sinks
 
   realtype *rate_of_change_data = NV_DATA_S(rate_of_change);
   memset(rate_of_change_data, 0, sizeof(realtype) * c->num_species);
@@ -79,12 +76,17 @@ int NetworkToOde(realtype t,
     Reaction_Ptr reaction = &network->reactions[i];
     realtype reaction_rate_of_change = GetRateOfChange(reaction,
                                                        concentrations);
-    rate_of_change_data[reaction->reactant_1] -= reaction_rate_of_change;
-    rate_of_change_data[reaction->product_1] += reaction_rate_of_change;
-    if (reaction->reactant_2 != NO_REAGENT) {
+
+    if (IsChanging(network, reaction->reactant_1)) {
+      rate_of_change_data[reaction->reactant_1] -= reaction_rate_of_change;
+    }
+    if (IsChanging(network, reaction->reactant_2)) {
       rate_of_change_data[reaction->reactant_2] -= reaction_rate_of_change;
     }
-    if (reaction->product_2 != NO_REAGENT) {
+    if (IsChanging(network, reaction->product_1)) {
+      rate_of_change_data[reaction->product_1] += reaction_rate_of_change;
+    }
+    if (IsChanging(network, reaction->product_2)) {
       rate_of_change_data[reaction->product_2] += reaction_rate_of_change;
     }
   }

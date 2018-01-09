@@ -51,6 +51,13 @@ bool IsSink(Network_Ptr network, species_t species) {
   return (network->sources & (1 << species)) != 0;
 }
 
+bool IsChanging(Network_Ptr network, species_t species) {
+  return species != NO_REAGENT
+         && !IsSource(network, species)
+         && !IsSink(network, species);
+}
+
+
 void SetRandomNetwork(Network_Ptr network, Config_Ptr config) {
   int reaction_range = config->max_num_reactions - config->min_num_reactions;
   network->num_reactions = rand() % reaction_range + config->min_num_reactions;

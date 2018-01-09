@@ -99,4 +99,6 @@ bool IsSource(Network_Ptr network, species_t species);
 
 bool IsSink(Network_Ptr network, species_t species);
 
+bool IsChanging(Network_Ptr network, species_t species);
+
 #endif // _NETWORK_H_
