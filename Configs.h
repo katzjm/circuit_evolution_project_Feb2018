@@ -10,9 +10,17 @@
 
 #include <stdbool.h>
 
+enum FitType {
+  CUSTOM,
+  SQUARE_ROOT,
+  CUBE_ROOT,
+  OSCILLATOR,
+  TRANSISTOR
+};
+
 typedef struct config_str {
-  double inputs;
-  double outputs;
+  double *inputs;
+  double *outputs;
   double max_rate_constant;
   double max_percent_rate_change;
   double prob_uni_uni;
@@ -34,8 +42,9 @@ typedef struct config_str {
   int min_num_reactions;
   int output_interval;
   int num_data_pts;
+  
+  enum FitType function_type;
 
-  bool function_based;
   bool show_cvode_errors;
   bool time_based;
 } Config, *Config_Ptr;
