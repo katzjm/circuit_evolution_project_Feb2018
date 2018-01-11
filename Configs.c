@@ -164,6 +164,23 @@ static void ValidateConfigs(Config_Ptr c) {
   }
 }
 
+static FILE* OpenFileIfValid(const char *file_name) {
+  FILE *f;
+  if (file_name != NULL) {
+    f = fopen(file_name, "r");
+  } else {
+    printf("  Using all defaults\nConfiguration successful\n");
+    return NULL;
+  }
+  if (f == NULL) {
+    printf("  %s could not be found. Using all defaults\n",
+           file_name == NULL ? "setup.txt" : file_name);
+    printf("Configuration successful\n");
+    return NULL;
+  }
+  return f;
+}
+
 void Configure(Config_Ptr c, const char *file_name) {
   SetDefaultConfigs();
   *c = defaults;
@@ -171,17 +188,7 @@ void Configure(Config_Ptr c, const char *file_name) {
   printf("Attempting to configure evolver...\n");
 
   FILE *f;
-  if (file_name != NULL) {
-    f = fopen(file_name, "r");
-  } else {
-    printf("  Using all defaults\nConfiguration successful\n");
-    srand(c->seed);
-    return;
-  }
-  if (f == NULL) {
-    printf("  %s could not be found. Using all defaults\n",
-           file_name == NULL ? "setup.txt" : file_name);
-    printf("Configuration successful\n");
+  if ((f = OpenFileIfValid(file_name)) == NULL) {
     srand(c->seed);
     return;
   }
@@ -192,7 +199,6 @@ void Configure(Config_Ptr c, const char *file_name) {
     SetConfig(c, config_name, config_val);
   }
   ValidateConfigs(c);
-
   SetTestData(c);
 
   srand(c->seed);
