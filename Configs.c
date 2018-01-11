@@ -14,6 +14,32 @@
 
 static Config defaults;
 
+static void SetTestData(Config_Ptr c) {
+  c->inputs = (double *) malloc(sizeof(double) * c->num_data_pts);
+  c->outputs = (double *) malloc(sizeof(double) * c->num_data_pts);
+  
+  switch (c->function_type) {
+    case SQUARE_ROOT:
+      for (int i = 1; i <= c->num_data_pts; i++) {
+        c->inputs[i - 1] = pow(i, 2);
+        c->outputs[i - 1] = i;
+      }
+      break;
+    case CUBE_ROOT:
+      for (int i = 1; i <= c->num_data_pts; i++) {
+        c->inputs[i - 1] = pow(i, 3);
+        c->outputs[i - 1] = i;
+      }
+      break;
+    case OSCILLATOR: // TODO
+      break;
+    case TRANSISTOR: // TODO
+      break;
+    case CUSTOM:
+      break;
+  }
+}
+
 static void SetDefaultConfigs() {
   defaults.fit_threshold = 0.1;
   defaults.max_num_generations = 1000;
@@ -102,6 +128,8 @@ static void SetConfig(Config_Ptr c, char *config_name, double config_val) {
     c->max_rate_constant = config_val;
   } else if (strcmp(config_name, "initialConcentrations") == 0) {
     c->max_rate_constant = config_val;
+  } else if (strcmp(config_name, "fitType") == 0) {
+    c->function_type = config_val;
   }
 }
 
@@ -165,8 +193,9 @@ void Configure(Config_Ptr c, const char *file_name) {
   }
   ValidateConfigs(c);
 
-  srand(c->seed);
+  SetTestData(c);
 
+  srand(c->seed);
   fclose(f);
   printf("Configuration successful\n");
 }
