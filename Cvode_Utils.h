@@ -19,9 +19,8 @@ typedef struct user_data_str {
   Config_Ptr config;
 } UserData, *UserData_Ptr;
 
-int SetUpCVodeInitial(void **cvode_mem,
-                      N_Vector species_concentrations,
-                      UserData_Ptr data);
+int SetUpCVodeInitial(CvodeData_Ptr cvode_data,
+                      UserData_Ptr user_data);
 
 int NetworkToOde(realtype t,
                  N_Vector species_concentrations,

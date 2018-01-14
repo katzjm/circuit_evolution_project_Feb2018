@@ -16,44 +16,46 @@
 #include "Network.h"
 #include "Reaction.h"
 
-int SetUpCVodeInitial(void **cvode_mem,
-                      N_Vector species_concentrations,
-                      UserData_Ptr data) {
+int SetUpCVodeInitial(CvodeData_Ptr cvode_data, UserData_Ptr user_data) {
   int flag;
 
-  *cvode_mem = CVodeCreate(CV_BDF, CV_NEWTON);
-  if (*cvode_mem == NULL) {
+  cvode_data->cvode_mem = CVodeCreate(CV_BDF, CV_NEWTON);
+  if (cvode_data->cvode_mem == NULL) {
     printf("Failed to create CVode");
     return 1;
   }
 
-  flag = CVodeInit(*cvode_mem, NetworkToOde, 0, species_concentrations);
+  flag = CVodeInit(cvode_data->cvode_mem,
+                   NetworkToOde, 0,
+                   cvode_data->concentration_mem);
   if (flag != CV_SUCCESS) {
     printf("Failed to initialize CVode");
     return 1;
   }
 
-  flag = CVodeSStolerances(*cvode_mem, RCONST(1.0e-6), RCONST(1.0e-12));
+  flag = CVodeSStolerances(cvode_data->cvode_mem,
+                           RCONST(1.0e-6),
+                           RCONST(1.0e-12));
   if (flag != CV_SUCCESS) {
     printf("Failed to set tolerances");
     return 1;
   }
 
-  if (!data->config->show_cvode_errors) {
-    flag = CVodeSetErrFile(*cvode_mem, NULL);
+  if (!user_data->config->show_cvode_errors) {
+    flag = CVodeSetErrFile(cvode_data->cvode_mem, NULL);
     if (flag != CV_SUCCESS) {
       puts("Failed Setting Error File");
       return 1;
     }
   }
 
-  flag = CVodeSetUserData(*cvode_mem, data);
+  flag = CVodeSetUserData(cvode_data->cvode_mem, user_data);
   if (flag != CV_SUCCESS) {
     puts("Failed data setting");
     return 1;
   }
 
-  flag = CVDense(*cvode_mem, data->config->num_species);
+  flag = CVDense(cvode_data->cvode_mem, user_data->config->num_species);
   if (flag != CV_SUCCESS) {
     puts("Failed CVDense Initialization");
     return 1;
