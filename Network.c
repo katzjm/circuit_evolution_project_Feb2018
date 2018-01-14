@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
+#include <string.h>
 
 #include "nvector/nvector_serial.h"
 
@@ -145,20 +146,36 @@ N_Vector GetInitialConcentrations(Config_Ptr c) {
 static int EvaluateNetworkVsTime(Network_Ptr network,
                                  Config_Ptr c,
                                  CvodeData_Ptr cvode_data) {
-  realtype *concentrations = NV_DATA_S(cvode_data->concentration_mem);
-  int flag = CVodeReInit(cvode_data->cvode_mem, 0,
-                         cvode_data->concentration_mem);
-  if (flag != CV_SUCCESS) {
-    printf("Failed Cvode ReInitialization\n");
-    return 1;
-  }
+  SetUpCvodeNextRun(cvode_data);
+  double species_fitness[c->num_species];
+  memset(species_fitness, 0, sizeof(species_fitness[0]) * c->num_species);
 
-  double *species_fitness = malloc(sizeof(network->fitness) * c->num_species);
   realtype t = 0;
   for (int i = 0; i < c->num_data_pts; i++) {
-    
+    realtype tout = c->inputs[i];
+    if (!RunCvode(cvode_data, tout, &t)) {
+      network->fitness = INFINITY;
+      return 1;
+    }
+
+    double expected = c->outputs[i];
+    for (int j = 0; j < c->num_species; j++) {
+      if (!IsChanging(network, j)) {
+        double found = NV_Ith_S(cvode_data->concentration_mem, j);
+        species_fitness[j] += pow(found - expected, 2);
+      } else {
+        species_fitness[j] = INFINITY;
+      }
+    }
   }
-  free(species_fitness);
+
+  network->fitness = INFINITY;
+  for (int i = 0; i < c->num_species; i++) {
+    if (species_fitness[i] < network->fitness) {
+      network->fitness = species_fitness[i];
+    }
+  }
+  return 0;
 }
 
 static int EvaluateNetworkVsConcentration() {
@@ -167,9 +184,9 @@ static int EvaluateNetworkVsConcentration() {
 
 int EvaluateNetwork(Network_Ptr network,
                     Config_Ptr c,
-                    N_Vector init_concentrations) {
+                    CvodeData_Ptr cvode_data) {
   if (c->time_based) {
-
+    EvaluateNetworkVsTime(network, c, cvode_data);
   } else {
 
   }

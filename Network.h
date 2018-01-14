@@ -13,6 +13,7 @@
 
 #include "Reaction.h"
 #include "Configs.h"
+//#include "Cvode_Utils.h"
 
 #define MAX_NUM_REACTIONS 20
 #define MAX_SPECIES 32
@@ -91,7 +92,7 @@ void ModifyRateConstant(Network_Ptr network, Config_Ptr config);
 
 int EvaluateNetwork(Network_Ptr network,
                     Config_Ptr c,
-                    N_Vector init_concentrations);
+                    CvodeData_Ptr cvode_data);
 
 N_Vector GetInitialConcentrations(Config_Ptr c);
 

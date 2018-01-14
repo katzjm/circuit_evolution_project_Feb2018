@@ -53,7 +53,7 @@ void SetUpCVodeFirstRun(CvodeData_Ptr cvode_data, UserData_Ptr user_data) {
 
   flag = CVDense(cvode_data->cvode_mem, user_data->config->num_species);
   CheckSuccess(flag, "Failed CVDense Initialization");
-}                                 
+}
 
 int NetworkToOde(realtype t,
                  N_Vector concentrations,
@@ -86,9 +86,13 @@ int NetworkToOde(realtype t,
   return 0;
 }
 
-void SetUpCvodeNextRun(CvodeData_Ptr cvode_data,
-                      UserData_Ptr user_data) {
+void SetUpCvodeNextRun(CvodeData_Ptr cvode_data) {
   int flag = CVodeReInit(cvode_data->cvode_mem, 0,
                          cvode_data->concentration_mem);
   CheckSuccess(flag, "Failed to Reinitialize CVode");
+}
+
+bool RunCvode(CvodeData_Ptr cvode_data, realtype tout, realtype *t) {
+  return CVode(cvode_data->cvode_mem, tout,
+               cvode_data->concentration_mem, t, CV_NORMAL) == CV_SUCCESS;
 }

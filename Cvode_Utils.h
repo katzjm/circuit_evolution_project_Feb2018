@@ -27,5 +27,6 @@ int NetworkToOde(realtype t,
                  N_Vector species_rate_of_change,
                  void *user_data);
 
-void SetUpCvodeNextRun(CvodeData_Ptr cvode_data,
-                      UserData_Ptr user_data);
+void SetUpCvodeNextRun(CvodeData_Ptr cvode_data);
+
+bool RunCvode(CvodeData_Ptr cvode_data, realtype tout, realtype *t);
