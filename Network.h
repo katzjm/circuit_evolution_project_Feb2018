@@ -94,8 +94,6 @@ int EvaluateNetwork(Network_Ptr network,
                     Config_Ptr c,
                     CvodeData_Ptr cvode_data);
 
-N_Vector GetInitialConcentrations(Config_Ptr c);
-
 bool IsSource(Network_Ptr network, species_t species);
 
 bool IsSink(Network_Ptr network, species_t species);
