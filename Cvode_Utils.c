@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "cvode/cvode.h"
 #include "cvode/cvode_dense.h"
@@ -16,52 +17,42 @@
 #include "Network.h"
 #include "Reaction.h"
 
-int SetUpCVodeInitial(CvodeData_Ptr cvode_data, UserData_Ptr user_data) {
+static void CheckSuccess(int flag, const char *error_message) {
+  if (flag != CV_SUCCESS) {
+    printf("%s", error_message);
+    exit(EXIT_FAILURE);
+  }
+}
+
+void SetUpCVodeFirstRun(CvodeData_Ptr cvode_data, UserData_Ptr user_data) {
   int flag;
 
   cvode_data->cvode_mem = CVodeCreate(CV_BDF, CV_NEWTON);
   if (cvode_data->cvode_mem == NULL) {
     printf("Failed to create CVode");
-    return 1;
+    exit(EXIT_FAILURE);
   }
 
   flag = CVodeInit(cvode_data->cvode_mem,
                    NetworkToOde, 0,
                    cvode_data->concentration_mem);
-  if (flag != CV_SUCCESS) {
-    printf("Failed to initialize CVode");
-    return 1;
-  }
+  CheckSuccess(flag, "Failed to initialize CVode");
 
   flag = CVodeSStolerances(cvode_data->cvode_mem,
                            RCONST(1.0e-6),
                            RCONST(1.0e-12));
-  if (flag != CV_SUCCESS) {
-    printf("Failed to set tolerances");
-    return 1;
-  }
+  CheckSuccess(flag, "Failed to set tolerances");
 
   if (!user_data->config->show_cvode_errors) {
     flag = CVodeSetErrFile(cvode_data->cvode_mem, NULL);
-    if (flag != CV_SUCCESS) {
-      puts("Failed Setting Error File");
-      return 1;
-    }
+    CheckSuccess(flag, "Failed Setting Error File");
   }
 
   flag = CVodeSetUserData(cvode_data->cvode_mem, user_data);
-  if (flag != CV_SUCCESS) {
-    puts("Failed data setting");
-    return 1;
-  }
+  CheckSuccess(flag, "Failed data setting");
 
   flag = CVDense(cvode_data->cvode_mem, user_data->config->num_species);
-  if (flag != CV_SUCCESS) {
-    puts("Failed CVDense Initialization");
-    return 1;
-  }
-
-  return 0;
+  CheckSuccess(flag, "Failed CVDense Initialization");
 }                                 
 
 int NetworkToOde(realtype t,
@@ -93,4 +84,11 @@ int NetworkToOde(realtype t,
     }
   }
   return 0;
+}
+
+void SetUpCvodeNextRun(CvodeData_Ptr cvode_data,
+                      UserData_Ptr user_data) {
+  int flag = CVodeReInit(cvode_data->cvode_mem, 0,
+                         cvode_data->concentration_mem);
+  CheckSuccess(flag, "Failed to Reinitialize CVode");
 }

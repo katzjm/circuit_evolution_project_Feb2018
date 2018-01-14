@@ -15,6 +15,7 @@
 #include "Network.h"
 #include "Reaction.h"
 #include "Configs.h"
+#include "Cvode_Utils.h"
 
 static void SetSourcesAndSinks(Network_Ptr network) {
   // Initially sources and sinks simply mark whether a species appears as a
@@ -143,7 +144,15 @@ N_Vector GetInitialConcentrations(Config_Ptr c) {
 
 static int EvaluateNetworkVsTime(Network_Ptr network,
                                  Config_Ptr c,
-                                 N_Vector init_concentrations) {
+                                 CvodeData_Ptr cvode_data) {
+  realtype *concentrations = NV_DATA_S(cvode_data->concentration_mem);
+  int flag = CVodeReInit(cvode_data->cvode_mem, 0,
+                         cvode_data->concentration_mem);
+  if (flag != CV_SUCCESS) {
+    printf("Failed Cvode ReInitialization\n");
+    return 1;
+  }
+
   double *species_fitness = malloc(sizeof(network->fitness) * c->num_species);
   realtype t = 0;
   for (int i = 0; i < c->num_data_pts; i++) {

@@ -25,6 +25,7 @@ int main(int argc, char **argv) {
     Usage();
   }
 
+  // Configure this run according to client provided parameters
   Config c;
   if (argc == 1) {
     Configure(&c, NULL);
@@ -32,13 +33,13 @@ int main(int argc, char **argv) {
     Configure(&c, argv[1]);
   }
 
+  // Set up Cvode
   CvodeData cvode_data;
   UserData user_data;
   user_data.config = &c;
   user_data.network = NULL;
-  SetUpCVodeInitial(&cvode_data, &user_data);
+  SetUpCvodeFirstRun(&cvode_data, &user_data);
 
-  
   Population pop;
   SetFirstGeneration(&pop, &c);
   for (int i = 0; i < c.max_num_generations; i++) {
