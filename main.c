@@ -8,6 +8,7 @@
 #include <stdio.h>
 
 #include "Configs.h"
+#include "Cvode_Utils.h"
 #include "Population.h"
 
 void Usage() {
@@ -30,6 +31,13 @@ int main(int argc, char **argv) {
   } else {
     Configure(&c, argv[1]);
   }
+
+  CvodeData cvode_data;
+  UserData user_data;
+  user_data.config = &c;
+  user_data.network = NULL;
+  SetUpCVodeInitial(&cvode_data, &user_data);
+
   
   Population pop;
   SetFirstGeneration(&pop, &c);
