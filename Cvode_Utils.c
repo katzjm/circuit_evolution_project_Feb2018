@@ -18,7 +18,7 @@
 
 int SetUpCVodeInitial(void **cvode_mem,
                       N_Vector species_concentrations,
-                      Data_Ptr data) {
+                      UserData_Ptr data) {
   int flag;
 
   *cvode_mem = CVodeCreate(CV_BDF, CV_NEWTON);
@@ -66,8 +66,8 @@ int NetworkToOde(realtype t,
                  N_Vector concentrations,
                  N_Vector rate_of_change,
                  void *user_data) {
-  Network_Ptr network = ((Data_Ptr) user_data)->network;
-  Config_Ptr c = ((Data_Ptr) user_data)->config;
+  Network_Ptr network = ((UserData_Ptr) user_data)->network;
+  Config_Ptr c = ((UserData_Ptr) user_data)->config;
 
   realtype *rate_of_change_data = NV_DATA_S(rate_of_change);
   memset(rate_of_change_data, 0, sizeof(realtype) * c->num_species);
