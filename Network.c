@@ -184,7 +184,13 @@ static int EvaluateNetworkVsConcentration(Network_Ptr network,
   realtype t_max = 50;
   realtype steady_state_threshold = 0.001;
 
+  N_Vector species_rate_change = N_VNew_Serial(c->num_species);
+  realtype species_at_steady_state[c->num_data_pts][c->num_species];
+  memset(species_at_steady_state, 0, 
+         sizeof(realtype) * c->num_species * c->num_data_pts);
+
   for (int i = 0; i < c->num_data_pts; i++) {
+    GetInitialConcentrations(
     SetUpCvodeNextRun(cvode_data);
 
     realtype t = 0;
@@ -197,9 +203,11 @@ static int EvaluateNetworkVsConcentration(Network_Ptr network,
       }
       tout += t_spacing;
 
-      steady_state_score = 0;
       if (fabs(t - t_spacing) > DBL_EPSILON) {
-        
+        UserData user_data = { network, c };
+        GetSpeciesRateOfChange(t, cvode_data->concentration_mem,
+                               species_rate_change, &user_data);
+        steady_state_score = N_VL1Norm(species_rate_change);
       } else {
         steady_state_score = INFINITY;
       }
@@ -207,7 +215,8 @@ static int EvaluateNetworkVsConcentration(Network_Ptr network,
 
 
   }
-
+  N_VDestroy_Serial(species_rate_change);
+  return 0;
 }
 
 int EvaluateNetwork(Network_Ptr network,

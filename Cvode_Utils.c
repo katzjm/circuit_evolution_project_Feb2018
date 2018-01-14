@@ -34,7 +34,7 @@ void SetUpCVodeFirstRun(CvodeData_Ptr cvode_data, UserData_Ptr user_data) {
   }
 
   flag = CVodeInit(cvode_data->cvode_mem,
-                   NetworkToOde, 0,
+                   GetSpeciesRateOfChange, 0,
                    cvode_data->concentration_mem);
   CheckSuccess(flag, "Failed to initialize CVode");
 
@@ -55,10 +55,10 @@ void SetUpCVodeFirstRun(CvodeData_Ptr cvode_data, UserData_Ptr user_data) {
   CheckSuccess(flag, "Failed CVDense Initialization");
 }
 
-int NetworkToOde(realtype t,
-                 N_Vector concentrations,
-                 N_Vector rate_of_change,
-                 void *user_data) {
+int GetSpeciesRateOfChange(realtype t,
+                           N_Vector concentrations,
+                           N_Vector rate_of_change,
+                           void *user_data) {
   Network_Ptr network = ((UserData_Ptr) user_data)->network;
   Config_Ptr c = ((UserData_Ptr) user_data)->config;
 
