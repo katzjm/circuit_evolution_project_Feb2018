@@ -13,7 +13,7 @@
 
 #include "Reaction.h"
 #include "Configs.h"
-//#include "Cvode_Utils.h"
+#include "Cvode_Utils.h"
 
 #define MAX_NUM_REACTIONS 20
 #define MAX_SPECIES 32
@@ -103,3 +103,4 @@ bool IsSink(Network_Ptr network, species_t species);
 bool IsChanging(Network_Ptr network, species_t species);
 
 #endif // _NETWORK_H_
+

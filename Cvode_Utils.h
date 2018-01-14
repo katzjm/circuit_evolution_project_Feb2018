@@ -10,7 +10,6 @@
 #include "nvector/nvector_serial.h"
 
 #include "Configs.h"
-#include "Network.h"
 
 typedef struct cvode_data_str {
   void *cvode_mem;
@@ -18,9 +17,11 @@ typedef struct cvode_data_str {
 } CvodeData, *CvodeData_Ptr;
 
 typedef struct user_data_str {
-  Network_Ptr network;
+  void *network;  // Made a void* instead of a Network_Ptr to get the compiler
+                  // to stop complaining
   Config_Ptr config;
 } UserData, *UserData_Ptr;
+
 
 void SetUpCvodeFirstRun(CvodeData_Ptr cvode_data,
                        UserData_Ptr user_data);
@@ -35,3 +36,4 @@ void SetUpCvodeNextRun(CvodeData_Ptr cvode_data);
 bool RunCvode(CvodeData_Ptr cvode_data, realtype tout, realtype *t);
 
 #endif  // _EVOLVER_CVODE_UTILS_H_
+

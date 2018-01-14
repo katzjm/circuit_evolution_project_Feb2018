@@ -158,11 +158,10 @@ static int EvaluateNetworkVsTime(Network_Ptr network,
       return 1;
     }
 
-    double expected = c->outputs[i];
     for (int j = 0; j < c->num_species; j++) {
       if (!IsChanging(network, j)) {
         double found = NV_Ith_S(cvode_data->concentration_mem, j);
-        species_fitness[j] += pow(found - expected, 2);
+        species_fitness[j] += pow(found - c->outputs[i], 2);
       } else {
         species_fitness[j] = INFINITY;
       }
@@ -178,7 +177,36 @@ static int EvaluateNetworkVsTime(Network_Ptr network,
   return 0;
 }
 
-static int EvaluateNetworkVsConcentration() {
+static int EvaluateNetworkVsConcentration(Network_Ptr network,
+                                          Config_Ptr c,
+                                          CvodeData_Ptr cvode_data) {
+  realtype t_spacing = 2;
+  realtype t_max = 50;
+  realtype steady_state_threshold = 0.001;
+
+  for (int i = 0; i < c->num_data_pts; i++) {
+    SetUpCvodeNextRun(cvode_data);
+
+    realtype t = 0;
+    realtype tout = t_spacing;
+    realtype steady_state_score;
+    do {
+      if (!RunCvode(cvode_data, tout, &t)) {
+        network->fitness = INFINITY;
+        return 1;
+      }
+      tout += t_spacing;
+
+      steady_state_score = 0;
+      if (fabs(t - t_spacing) > DBL_EPSILON) {
+        
+      } else {
+        steady_state_score = INFINITY;
+      }
+    } while (steady_state_score > steady_state_threshold && t < t_max);
+
+
+  }
 
 }
 
