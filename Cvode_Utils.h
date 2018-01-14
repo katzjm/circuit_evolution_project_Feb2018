@@ -4,6 +4,9 @@
  * Author: Josh Katz
  */
 
+#ifndef _EVOLVER_CVODE_UTILS_H_
+#define _EVOLVER_CVODE_UTILS_H_
+
 #include "nvector/nvector_serial.h"
 
 #include "Configs.h"
@@ -30,3 +33,5 @@ int NetworkToOde(realtype t,
 void SetUpCvodeNextRun(CvodeData_Ptr cvode_data);
 
 bool RunCvode(CvodeData_Ptr cvode_data, realtype tout, realtype *t);
+
+#endif  // _EVOLVER_CVODE_UTILS_H_
