@@ -9,6 +9,7 @@
 
 #include "Network.h"
 #include "Configs.h"
+#include "Cvode_Utils.h"
 
 typedef struct population_str {
   Network_Ptr *network_order;
@@ -16,13 +17,15 @@ typedef struct population_str {
   int num_networks;
 } Population, *Population_Ptr;
 
-int SetFirstGeneration(Population_Ptr pop, Config_Ptr config);
+int SetFirstGeneration(Population_Ptr pop,
+                       Config_Ptr config,
+                       CvodeData_Ptr cvode_data);
 
 double BestFitness(Population_Ptr pop);
 
-void PrintSmallStatus(Population_Ptr pop);
+void GetSmallStatus(Population_Ptr pop, char *returnbuf);
 
-void PrintLargeStatus(Population_Ptr pop);
+void GetLargeStatus(Population_Ptr pop, char *returnbuf);
 
 void KillPopulation(Population_Ptr pop);
 

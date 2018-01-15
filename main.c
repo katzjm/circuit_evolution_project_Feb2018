@@ -35,26 +35,29 @@ int main(int argc, char **argv) {
 
   // Set up Cvode
   CvodeData cvode_data;
-  UserData user_data;
-  user_data.config = &c;
-  user_data.network = NULL;
+  UserData user_data = { NULL, &c };
   SetUpCvodeFirstRun(&cvode_data, &user_data);
 
   Population pop;
-  SetFirstGeneration(&pop, &c);
+  SetFirstGeneration(&pop, &c, &cvode_data);
   for (int i = 0; i < c.max_num_generations; i++) {
     if (BestFitness(&pop) > c.fit_threshold) {
       break;
     }
 
     if (i % c.output_interval == 0) {
-      PrintSmallStatus(&pop);
+      char buf[256];
+      GetSmallStatus(&pop, buf);
+      printf("Generation: %d, %s\n", i, buf);
     }
 
     SetNextGeneration(&pop);
   }
 
-  PrintLargeStatus(&pop);
+  char buf[256];
+  GetLargeStatus(&pop, buf);
+  printf("%s", buf);
+
   KillPopulation(&pop);
   return EXIT_SUCCESS;
 }
