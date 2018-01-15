@@ -86,5 +86,15 @@ TEST_F(Test_Reaction, TestMutateRateConstant) {
   EXPECT_GT(num_decreases, 0);
 }
 
+TEST_F(Test_Reaction, TestGetRateOfChange) {
+  N_Vector concentrations = N_VNew_Serial(c.num_species);
+  for (int i = 0; i < c.num_species; i++) {
+    NV_Ith_S(concentrations, i) = i;
+  }
+
+  SetReaction(&reaction, 4, 3, 3, 4, 5.0);
+  EXPECT_EQ(60, GetRateOfChange(&reaction, concentrations));
+}
+
 }  // evolvertest
 
