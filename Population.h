@@ -29,6 +29,8 @@ void GetLargeStatus(Population_Ptr pop, char *returnbuf);
 
 void KillPopulation(Population_Ptr pop);
 
-int SetNextGeneration(Population_Ptr pop);
+int SetNextGeneration(Population_Ptr pop,
+                      Config_Ptr c,
+                      CvodeData_Ptr cvode_data);
 
 #endif // _POPULATION_H_

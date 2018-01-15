@@ -90,6 +90,10 @@ bool RemoveReaction(Network_Ptr network);
 //                parameters. See Config.h
 void ModifyRateConstant(Network_Ptr network, Config_Ptr config);
 
+void CloneNetwork(Network_Ptr cloned_network,
+                  Network_Ptr new_network,
+                  Config_Ptr c);
+
 int EvaluateNetwork(Network_Ptr network,
                     Config_Ptr c,
                     CvodeData_Ptr cvode_data);

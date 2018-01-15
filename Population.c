@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "Population.h"
 #include "Configs.h"
@@ -59,8 +60,24 @@ double BestFitness(Population_Ptr pop) {
   return pop->network_order[0]->fitness;
 }
 
-int SetNextGeneration(Population_Ptr pop) {
+int SetNextGeneration(Population_Ptr pop,
+                      Config_Ptr c,
+                      CvodeData_Ptr cvode_data) {
+  Network_Ptr new_networks = (Network_Ptr) 
+                             malloc(sizeof(Network) * pop->num_networks);
+
+  new_networks[0] = pop->networks[0];
+  for (int i = 1; i < pop->num_networks; i++) {
+    int cloned_network_index = fmin(rand() % pop->num_networks,
+                                    rand() % pop->num_networks);
+    new_networks[i] = pop->networks[cloned_network_index];
+    MutateNetwork(&new_networks[i], c);
+  }
   
+  free(pop->networks);
+  pop->networks = new_networks;
+  EvaluatePopulation(pop, c, cvode_data);
+  return 0;
 }
 
 void GetSmallStatus(Population_Ptr pop, char *returnbuf) {
