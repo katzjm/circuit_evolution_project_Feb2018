@@ -6,12 +6,12 @@ ARFLAGS = rcs
 
 # define compilation flags
 CFLAGS += -g -Wall -Wextra -Wpedantic -I. -O0
-LDFLAGS = -L. -levolver
+LDFLAGS = -L. -L./cvode_libs -levolver -lsundials_cvode -lsundials_nvecserial
 CPPUNITFLAGS = -L./gtest -lgtest
 
 # define common dependencies
-OBJS = Reaction.o Network.o Configs.o
-HEADERS = Reaction.h Network.h Configs.h
+OBJS = Reaction.o Network.o Configs.o Cvode_Utils.o
+HEADERS = Reaction.h Network.h Configs.h Cvode_Utils.h
 TESTOBJS = test_configs.o test_Reaction.o test_network.o test_suite.o
 TESTHEADERS = test_configs.h test_Reaction.h test_network.h
 
