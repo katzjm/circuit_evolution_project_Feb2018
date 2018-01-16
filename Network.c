@@ -50,7 +50,7 @@ bool IsSource(Network_Ptr network, species_t species) {
 }
 
 bool IsSink(Network_Ptr network, species_t species) {
-  return (network->sources & (1 << species)) != 0;
+  return (network->sinks & (1 << species)) != 0;
 }
 
 bool IsChanging(Network_Ptr network, species_t species) {

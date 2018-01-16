@@ -94,6 +94,7 @@ TEST_F(Test_Reaction, TestGetRateOfChange) {
 
   SetReaction(&reaction, 4, 3, 3, 4, 5.0);
   EXPECT_EQ(60, GetRateOfChange(&reaction, concentrations));
+  N_VDestroy_Serial(concentrations);
 }
 
 }  // evolvertest

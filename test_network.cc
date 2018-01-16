@@ -28,4 +28,26 @@ TEST_F(Test_Network, TestRandomNetworkSetting) {
   }
 }
 
+/*
+TEST_F(Test_Network, TestIsSource) {
+  EXPECT_EQ(false, IsSource(&network, 1));
+  EXPECT_EQ(false, IsSource(&network, 2));
+  EXPECT_EQ(true, IsSource(&network, 3));
+  EXPECT_EQ(false, IsSource(&network, 4));
+}
+
+TEST_F(Test_Network, TestIsSink) {
+  EXPECT_EQ(false, IsSink(&network, 1));
+  EXPECT_EQ(false, IsSink(&network, 2));
+  EXPECT_EQ(false, IsSink(&network, 3));
+  EXPECT_EQ(true, IsSink(&network, 4));
+}
+
+TEST_F(Test_Network, TestIsChanging) {
+  EXPECT_EQ(true, IsChanging(&network, 1));
+  EXPECT_EQ(true, IsChanging(&network, 2));
+  EXPECT_EQ(false, IsChanging(&network, 3));
+  EXPECT_EQ(false, IsChanging(&network, 4));
+}*/
+
 }  // evolvertest

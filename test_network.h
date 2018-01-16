@@ -36,4 +36,4 @@ class Test_Network : public ::testing::Test {
 
 }  // evolvertest
 
-#endif // _EVOLVER_TEST_Network_H_
+#endif // _EVOLVER_TEST_NETWORK_H_

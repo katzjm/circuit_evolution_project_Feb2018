@@ -73,13 +73,15 @@ int GetSpeciesRateOfChange(realtype t,
     if (IsChanging(network, reaction->reactant_1)) {
       rate_of_change_data[reaction->reactant_1] -= reaction_rate_of_change;
     }
-    if (IsChanging(network, reaction->reactant_2)) {
+    if (IsChanging(network, reaction->reactant_2) &&
+        reaction->reactant_1 != reaction->reactant_2) {
       rate_of_change_data[reaction->reactant_2] -= reaction_rate_of_change;
     }
     if (IsChanging(network, reaction->product_1)) {
       rate_of_change_data[reaction->product_1] += reaction_rate_of_change;
     }
-    if (IsChanging(network, reaction->product_2)) {
+    if (IsChanging(network, reaction->product_2) &&
+        reaction->product_1 != reaction->product_2) {
       rate_of_change_data[reaction->product_2] += reaction_rate_of_change;
     }
   }
