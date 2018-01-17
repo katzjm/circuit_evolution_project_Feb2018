@@ -35,5 +35,9 @@ void SetUpCvodeNextRun(CvodeData_Ptr cvode_data);
 
 bool RunCvode(CvodeData_Ptr cvode_data, realtype tout, realtype *t);
 
+void DestroyCvode(CvodeData_Ptr cvode_data);
+
+N_Vector GetNewNVector(Config_Ptr c);
+
 #endif  // _EVOLVER_CVODE_UTILS_H_
 

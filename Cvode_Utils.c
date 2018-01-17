@@ -24,7 +24,7 @@ static void CheckSuccess(int flag, const char *error_message) {
   }
 }
 
-void SetUpCVodeFirstRun(CvodeData_Ptr cvode_data, UserData_Ptr user_data) {
+void SetUpCvodeFirstRun(CvodeData_Ptr cvode_data, UserData_Ptr user_data) {
   int flag;
 
   cvode_data->cvode_mem = CVodeCreate(CV_BDF, CV_NEWTON);
@@ -73,15 +73,13 @@ int GetSpeciesRateOfChange(realtype t,
     if (IsChanging(network, reaction->reactant_1)) {
       rate_of_change_data[reaction->reactant_1] -= reaction_rate_of_change;
     }
-    if (IsChanging(network, reaction->reactant_2) &&
-        reaction->reactant_1 != reaction->reactant_2) {
+    if (IsChanging(network, reaction->reactant_2)) {
       rate_of_change_data[reaction->reactant_2] -= reaction_rate_of_change;
     }
     if (IsChanging(network, reaction->product_1)) {
       rate_of_change_data[reaction->product_1] += reaction_rate_of_change;
     }
-    if (IsChanging(network, reaction->product_2) &&
-        reaction->product_1 != reaction->product_2) {
+    if (IsChanging(network, reaction->product_2)) {
       rate_of_change_data[reaction->product_2] += reaction_rate_of_change;
     }
   }
@@ -98,3 +96,12 @@ bool RunCvode(CvodeData_Ptr cvode_data, realtype tout, realtype *t) {
   return CVode(cvode_data->cvode_mem, tout,
                cvode_data->concentration_mem, t, CV_NORMAL) == CV_SUCCESS;
 }
+
+void DestroyCvode(CvodeData_Ptr cvode_data) {
+  CVodeFree(&cvode_data->cvode_mem);
+}
+
+N_Vector GetNewNVector(Config_Ptr c) {
+  return N_VNew_Serial(c->num_species);
+}
+
