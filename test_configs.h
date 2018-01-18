@@ -19,9 +19,6 @@ class Test_Configs : public ::testing::Test {
  protected:
   Test_Configs() {
     test_file = "test-configs/setup.txt";
-    non_existant_file = "test-configs/hello.txt";
-    bad_format_file = "test-configs/setup_bad_format.txt";
-    bad_configs_file = "test-configs/setup_bad_configs.txt";
   }
 
   virtual ~Test_Configs() {}
@@ -32,9 +29,6 @@ class Test_Configs : public ::testing::Test {
 
   Config test_config;
   const char *test_file;
-  const char *non_existant_file;
-  const char *bad_format_file;
-  const char *bad_configs_file;
 };
 
 } // evolvertest
