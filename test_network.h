@@ -21,6 +21,11 @@ class Test_Network : public ::testing::Test {
  protected:
   Test_Network() {
     Configure(&c, NULL);
+    Reaction rs[3];
+    SetReaction(&rs[0], 1, 1, 2, NO_REAGENT, 2.0);
+    SetReaction(&rs[1], 3, NO_REAGENT, 2, NO_REAGENT, 2.0);
+    SetReaction(&rs[2], 2, NO_REAGENT, 4, 1, 2.0);
+    SetNetwork(&test_network, rs, 0, 3);
   }
 
   virtual ~Test_Network() {}
@@ -31,6 +36,7 @@ class Test_Network : public ::testing::Test {
 
   Config c;
   Network network;
+  Network test_network;
 
 };  // Test_Network
 

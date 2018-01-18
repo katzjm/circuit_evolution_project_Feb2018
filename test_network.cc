@@ -28,26 +28,65 @@ TEST_F(Test_Network, TestRandomNetworkSetting) {
   }
 }
 
-/*
+TEST_F(Test_Network, TestRemoveReactionOK) {
+  ASSERT_TRUE(RemoveReaction(&test_network));
+  EXPECT_EQ(2, test_network.num_reactions);
+  EXPECT_EQ(10, test_network.sources);
+  EXPECT_EQ(4, test_network.sinks);
+}
+
+TEST_F(Test_Network, TestRemoveAllReactions) {
+  ASSERT_TRUE(RemoveReaction(&test_network));
+  EXPECT_EQ(2, test_network.num_reactions);
+  EXPECT_EQ(10, test_network.sources);
+  EXPECT_EQ(4, test_network.sinks);
+
+  ASSERT_TRUE(RemoveReaction(&test_network));
+  EXPECT_EQ(1, test_network.num_reactions);
+  EXPECT_EQ(2, test_network.sources);
+  EXPECT_EQ(4, test_network.sinks);
+
+  ASSERT_FALSE(RemoveReaction(&test_network));
+  EXPECT_EQ(1, test_network.num_reactions);
+  EXPECT_EQ(2, test_network.sources);
+  EXPECT_EQ(4, test_network.sinks);
+}
+
+TEST_F(Test_Network, TestAddReaction) {
+  ASSERT_TRUE(AddReaction(&test_network, &c));
+  EXPECT_EQ(4, test_network.num_reactions);
+}
+
+TEST_F(Test_Network, TestAddTooManyReactions) {
+  for (int i = 4; i <= MAX_NUM_REACTIONS; i++) {
+    ASSERT_TRUE(AddReaction(&test_network, &c));
+    EXPECT_EQ(i, test_network.num_reactions);
+  }
+  ASSERT_FALSE(AddReaction(&test_network, &c));
+  EXPECT_EQ(20, test_network.num_reactions);
+
+}
+
+
 TEST_F(Test_Network, TestIsSource) {
-  EXPECT_EQ(false, IsSource(&network, 1));
-  EXPECT_EQ(false, IsSource(&network, 2));
-  EXPECT_EQ(true, IsSource(&network, 3));
-  EXPECT_EQ(false, IsSource(&network, 4));
+  EXPECT_FALSE(IsSource(&test_network, 1));
+  EXPECT_FALSE(IsSource(&test_network, 2));
+  EXPECT_TRUE(IsSource(&test_network, 3));
+  EXPECT_FALSE(IsSource(&test_network, 4));
 }
 
 TEST_F(Test_Network, TestIsSink) {
-  EXPECT_EQ(false, IsSink(&network, 1));
-  EXPECT_EQ(false, IsSink(&network, 2));
-  EXPECT_EQ(false, IsSink(&network, 3));
-  EXPECT_EQ(true, IsSink(&network, 4));
+  EXPECT_FALSE(IsSink(&test_network, 1));
+  EXPECT_FALSE(IsSink(&test_network, 2));
+  EXPECT_FALSE(IsSink(&test_network, 3));
+  EXPECT_TRUE(IsSink(&test_network, 4));
 }
 
 TEST_F(Test_Network, TestIsChanging) {
-  EXPECT_EQ(true, IsChanging(&network, 1));
-  EXPECT_EQ(true, IsChanging(&network, 2));
-  EXPECT_EQ(false, IsChanging(&network, 3));
-  EXPECT_EQ(false, IsChanging(&network, 4));
-}*/
+  EXPECT_TRUE(IsChanging(&test_network, 1));
+  EXPECT_TRUE(IsChanging(&test_network, 2));
+  EXPECT_FALSE(IsChanging(&test_network, 3));
+  EXPECT_FALSE(IsChanging(&test_network, 4));
+}
 
 }  // evolvertest

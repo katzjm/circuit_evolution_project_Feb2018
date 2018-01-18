@@ -115,7 +115,7 @@ bool AddReaction(Network_Ptr network, Config_Ptr config) {
 }
 
 bool RemoveReaction(Network_Ptr network) {
-  if (network->num_reactions <= 0) {
+  if (network->num_reactions <= 1) {
     return false;
   }
   network->num_reactions--;

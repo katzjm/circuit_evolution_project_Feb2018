@@ -131,27 +131,4 @@ TEST_F(Test_Cvode_Utils, TestMultipleRun) {
   DestroyCvode(&cvode_data);
 }
 
-
-TEST_F(Test_Cvode_Utils, TestIsSource) {
-  EXPECT_EQ(false, IsSource(&network, 1));
-  EXPECT_EQ(false, IsSource(&network, 2));
-  EXPECT_EQ(true, IsSource(&network, 3));
-  EXPECT_EQ(false, IsSource(&network, 4));
-}
-
-TEST_F(Test_Cvode_Utils, TestIsSink) {
-  EXPECT_EQ(false, IsSink(&network, 1));
-  EXPECT_EQ(false, IsSink(&network, 2));
-  EXPECT_EQ(false, IsSink(&network, 3));
-  EXPECT_EQ(true, IsSink(&network, 4));
-}
-
-TEST_F(Test_Cvode_Utils, TestIsChanging) {
-  EXPECT_EQ(true, IsChanging(&network, 1));
-  EXPECT_EQ(true, IsChanging(&network, 2));
-  EXPECT_EQ(false, IsChanging(&network, 3));
-  EXPECT_EQ(false, IsChanging(&network, 4));
-}
-
-
 }  // evolvertest
