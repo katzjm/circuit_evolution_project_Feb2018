@@ -19,34 +19,46 @@ enum FitType {
 };
 
 typedef struct config_str {
+  /* Evaluation Parameters */
   double *inputs;
   double *outputs;
+  int num_data_pts;
+  enum FitType function_type;
+  bool time_based;
+
+  /* Reaction Creation Parameters */
   double max_rate_constant;
-  double max_percent_rate_change;
   double prob_uni_uni;
   double prob_uni_bi;
   double prob_bi_uni;
   double prob_bi_bi;
+
+  /* Network Creation Parameters */
+  double initial_concentrations;
+  int max_num_reactions;
+  int min_num_reactions;
+  int num_species;
+
+  /* Network Mutation Parameters */
+  double max_percent_rate_change;
   double prob_add_reaction;
   double prob_remove_reaction;
   double prob_rate_change;
-  double percent_to_clone;
-  double fit_threshold;
-  double initial_concentrations;
 
-  int seed;
-  int max_num_generations;
+  /* Population Creation Parameter */
   int max_pop_size;
-  int num_species;
-  int max_num_reactions;
-  int min_num_reactions;
-  int output_interval;
-  int num_data_pts;
-  
-  enum FitType function_type;
 
+  /* Population Generation Paremters */
+  double fit_threshold;
+  int max_num_generations;
+
+  /* Output Parameters */
+  int output_interval;
   bool show_cvode_errors;
-  bool time_based;
+
+  /* Random Number Generator Seed */
+  int seed;
+
 } Config, *Config_Ptr;
 
 
