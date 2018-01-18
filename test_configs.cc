@@ -65,4 +65,28 @@ TEST_F(Test_Configs, TestUserSetupConfiguration) {
   EXPECT_EQ(test_config.time_based, true);
 }
 
+TEST_F(Test_Configs, TestCustomInput) {
+  Configure(&test_config, "test-configs/setup_0.txt");
+  for (int i = 0; i < test_config.num_data_pts; i++) {
+    EXPECT_EQ(i, test_config.inputs[i]);
+    EXPECT_EQ(i + 1, test_config.outputs[i]);
+  }
+}
+
+TEST_F(Test_Configs, TestSquareRootInput) {
+  Configure(&test_config, "test-configs/setup_1.txt");
+  for (int i = 0; i < test_config.num_data_pts; i++) {
+    EXPECT_EQ(i, test_config.inputs[i]);
+    EXPECT_EQ(i * i, test_config.outputs[i]);
+  }
+}
+
+TEST_F(Test_Configs, TestCubeRootInput) {
+  Configure(&test_config, "test-configs/setup_2.txt");
+  for (int i = 0; i < test_config.num_data_pts; i++) {
+    EXPECT_EQ(i, test_config.inputs[i]);
+    EXPECT_EQ(i * i * i, test_config.outputs[i]);
+  }
+}
+
 }  // evolvertest

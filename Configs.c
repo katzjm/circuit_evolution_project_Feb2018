@@ -19,17 +19,17 @@ static void SetTestData(Config_Ptr c) {
   switch (c->function_type) {
     case SQUARE_ROOT: 
       {
-        for (int i = 1; i <= c->num_data_pts; i++) {
-          c->inputs[i - 1] = pow(i, 2);
-          c->outputs[i - 1] = i;
+        for (int i = 0; i < c->num_data_pts; i++) {
+          c->inputs[i] = i;
+          c->outputs[i] = i * i;
         }
         break; 
       }
     case CUBE_ROOT:
       {
-        for (int i = 1; i <= c->num_data_pts; i++) {
-          c->inputs[i - 1] = pow(i, 3);
-          c->outputs[i - 1] = i;
+        for (int i = 0; i < c->num_data_pts; i++) {
+          c->inputs[i] = i;
+          c->outputs[i] = i * i * i;
         }
         break;
       }
