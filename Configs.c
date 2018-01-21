@@ -39,7 +39,7 @@ static void SetTestData(Config_Ptr c) {
       break;
     case CUSTOM: 
       {
-        FILE *test_file = fopen("test_pts.txt", "r");
+        FILE *test_file = fopen(c->test_file, "r");
         char buf[128];
         for (int i = 0; i < c->num_data_pts; i++) {
           fgets(buf, 128, test_file);
@@ -51,91 +51,94 @@ static void SetTestData(Config_Ptr c) {
   }
 }
 
-static int GetConfig(FILE *f, char *config_name, double *config_val) {
+static int GetConfig(FILE *f, char *config_name, char  *config_val) {
   char buf[128];
   if (fgets(buf, 128, f) == NULL) {
     printf("  Configuration file read\n");
     return 1;
   }
-  if (sscanf(buf, "%s %lf", config_name, config_val) != 2) {
+  if (sscanf(buf, "%s %s", config_name, config_val) != 2) {
     printf("  file could not be read to completion\n");
     return 1;
   }
   return 0;
 }
 
-static void SetConfig(Config_Ptr c, char *config_name, double config_val) {
-  if (config_val < 0) {
-    printf("  Default value used for %s\n", config_name);
-    return;
-  }
+static void SetConfig(Config_Ptr c, char *config_name, char *config_val) {
+  double config_val_numerical;
 
   /* Evaluation Parameters */
+  if (strcmp(config_name, "testPtFile") == 0) {
+    strcpy(c->test_file, config_val);
+  } else {
+    sscanf(config_val, "%lf", &config_val_numerical);
+  }
+
   if (strcmp(config_name, "numDataPoints") == 0) {
-    c->num_data_pts = config_val;
+    c->num_data_pts = config_val_numerical;
   } else if (strcmp(config_name, "timeBased") == 0) {
-    c->time_based = config_val;
+    c->time_based = config_val_numerical;
   } else if (strcmp(config_name, "fitType") == 0) {
-    c->function_type = config_val;
+    c->function_type = config_val_numerical;
   }
 
   /* Reaction Creation Parameters */
   if (strcmp(config_name, "maxInitialRateConstant") == 0) {
-    c->max_rate_constant = config_val;
+    c->max_rate_constant = config_val_numerical;
   } else if (strcmp(config_name, "probabilityOfUniUni") == 0) {
-    c->prob_uni_uni = config_val;
+    c->prob_uni_uni = config_val_numerical;
   } else if (strcmp(config_name, "probabilityOfUniBi") == 0) {
-    c->prob_uni_bi = config_val;
+    c->prob_uni_bi = config_val_numerical;
   } else if (strcmp(config_name, "probabilityOfBiUni") == 0) {
-    c->prob_bi_uni = config_val;
+    c->prob_bi_uni = config_val_numerical;
   } else if (strcmp(config_name, "probabilityOfBiBi") == 0) {
-    c->prob_bi_bi = config_val;
+    c->prob_bi_bi = config_val_numerical;
   }
 
   /* Network Creation Parameters */
   if (strcmp(config_name, "initialConcentrations") == 0) {
-    c->initial_concentrations = config_val;
+    c->initial_concentrations = config_val_numerical;
   } else if (strcmp(config_name, "maxNumberOfSpecies") == 0) {
-    c->num_species = config_val;
+    c->num_species = config_val_numerical;
   } else if (strcmp(config_name, "maxNumberOfReactions") == 0) {
-    c->max_num_reactions = config_val;
+    c->max_num_reactions = config_val_numerical;
   } else if (strcmp(config_name, "minNumberOfReactions") == 0) {
-    c->min_num_reactions = config_val;
+    c->min_num_reactions = config_val_numerical;
   }
   
   /* Network Mutation Parameters */
   if (strcmp(config_name, "addReactionMutation") == 0) {
-    c->prob_add_reaction = config_val;
+    c->prob_add_reaction = config_val_numerical;
   } else if (strcmp(config_name, "deleteReactionMutation") == 0) {
-    c->prob_remove_reaction = config_val;
+    c->prob_remove_reaction = config_val_numerical;
   } else if (strcmp(config_name, "rateConstantMutation") == 0) {
-    c->prob_rate_change = config_val;
+    c->prob_rate_change = config_val_numerical;
   } else if (strcmp(config_name, "maxRateConstantPercentVariation") == 0) {
-    c->max_percent_rate_change = config_val;
+    c->max_percent_rate_change = config_val_numerical;
   }
   
   /* Population Creation Parameter */
   if (strcmp(config_name, "maxPopulationSize") == 0) {
-    c->max_pop_size = config_val;
+    c->max_pop_size = config_val_numerical;
   }
 
   /* Population Generation Paremters */
   if (strcmp(config_name, "maxNumberOfGenerations") == 0) {
-    c->max_num_generations = config_val;
+    c->max_num_generations = config_val_numerical;
   } else if (strcmp(config_name, "fitnessThresholdToStop") == 0) {
-    c->fit_threshold = config_val;
+    c->fit_threshold = config_val_numerical;
   } 
 
   /* Output Parameters */
   if (strcmp(config_name, "intervalForOutput") == 0) {
-    c->output_interval = config_val;
+    c->output_interval = config_val_numerical;
   } else if (strcmp(config_name, "showCVodeErrors") == 0) {
-    c->show_cvode_errors = config_val;
+    c->show_cvode_errors = config_val_numerical;
   } 
 
   /* Random Number Generator Seed */
   if (strcmp(config_name, "seed") == 0) {
-    c->seed = config_val;
+    c->seed = config_val_numerical;
   }
 }
 
@@ -189,8 +192,8 @@ void Configure(Config_Ptr c, const char *file_name) {
   }
 
   char config_name[128];
-  double config_val;
-  while (GetConfig(f, config_name, &config_val) == 0) {
+  char config_val[64];
+  while (GetConfig(f, config_name, config_val) == 0) {
     SetConfig(c, config_name, config_val);
   }
   ValidateConfigs(c);

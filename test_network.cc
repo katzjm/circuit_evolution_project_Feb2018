@@ -35,6 +35,16 @@ TEST_F(Test_Network, TestRemoveReactionOK) {
   EXPECT_EQ(4, test_network.sinks);
 }
 
+TEST_F(Test_Network, TestEvaluateVsTime) {
+  N_Vector concentrations = GetNewNVector(&c);
+  CvodeData cvode_data = { NULL, concentrations };
+  UserData user_data = { &test_network, &c };
+
+  SetUpCvodeFirstRun(&cvode_data, &user_data);
+  ASSERT_EQ(0, EvaluateNetwork(&test_network, &c, &cvode_data));
+  EXPECT_LE(test_network.fitness, 0.01);
+}
+
 TEST_F(Test_Network, TestRemoveAllReactions) {
   ASSERT_TRUE(RemoveReaction(&test_network));
   EXPECT_EQ(2, test_network.num_reactions);
@@ -64,9 +74,7 @@ TEST_F(Test_Network, TestAddTooManyReactions) {
   }
   ASSERT_FALSE(AddReaction(&test_network, &c));
   EXPECT_EQ(20, test_network.num_reactions);
-
 }
-
 
 TEST_F(Test_Network, TestIsSource) {
   EXPECT_FALSE(IsSource(&test_network, 1));

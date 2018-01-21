@@ -25,6 +25,7 @@ typedef struct config_str {
   int num_data_pts;
   enum FitType function_type;
   bool time_based;
+  char test_file[64];
 
   /* Reaction Creation Parameters */
   double max_rate_constant;

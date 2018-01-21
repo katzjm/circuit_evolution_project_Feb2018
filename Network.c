@@ -154,7 +154,7 @@ static void UpdateSpeciesFitnesses(double *species_fitness,
                                    Config_Ptr c,
                                    CvodeData_Ptr cvode_data) {
   for (int i = 0; i < c->num_species; i++) {
-    if (!IsChanging(network, i)) {
+    if (IsChanging(network, i)) {
       double found = NV_Ith_S(cvode_data->concentration_mem, i);
       species_fitness[i] += pow(found - c->outputs[i], 2);
     } else {
@@ -181,12 +181,16 @@ static int EvaluateNetworkVsTime(Network_Ptr network,
   memset(species_fitness, 0, sizeof(species_fitness[0]) * c->num_species);
 
   realtype t = 0;
+  // TODO put SetInitialConcentrations in Cvode Setup because it's necessary for initialization
+  SetInitialConcentrations(network, cvode_data, c, -1);
   SetUpCvodeNextRun(cvode_data);
   for (int i = 0; i < c->num_data_pts; i++) {
     realtype tout = c->inputs[i];
-    if (!RunCvode(cvode_data, tout, &t)) {
-      network->fitness = INFINITY;
-      return 1;
+    if (tout != t) {
+      if (!RunCvode(cvode_data, tout, &t)) {
+        network->fitness = INFINITY;
+        return 1;
+      }
     }
     UpdateSpeciesFitnesses(species_fitness, network, c, cvode_data);
   }

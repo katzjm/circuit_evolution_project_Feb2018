@@ -20,4 +20,4 @@ seed 1508215203
 initialConcentrations 5.0
 showCVodeErrors 0
 timeBased 1
-
+testPtFile test_pts.txt
