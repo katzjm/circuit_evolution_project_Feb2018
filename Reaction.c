@@ -4,6 +4,7 @@
  * Author: Josh Katz
  */
 
+#include <stdio.h>
 #include <stdlib.h>    // for rand
 #include <assert.h>    // for assert
 #include <math.h>      // for fmod
@@ -89,9 +90,63 @@ void MutateRateConstant(Reaction_Ptr reaction, Config_Ptr config) {
   reaction->rate_constant *= (1 + percent_change * change_direction);
 }
 
+bool IsUniUni(Reaction_Ptr reaction) {
+  return reaction->reactant_2 == NO_REAGENT
+         && reaction->product_2 == NO_REAGENT;
+}
+
+bool IsUniBi(Reaction_Ptr reaction) {
+  return reaction->reactant_2 == NO_REAGENT
+         && reaction->product_2 != NO_REAGENT;
+}
+
+bool IsBiUni(Reaction_Ptr reaction) {
+  return reaction->reactant_2 != NO_REAGENT
+         && reaction->product_2 == NO_REAGENT;
+}
+
+bool IsBiBi(Reaction_Ptr reaction) {
+  return reaction->reactant_2 != NO_REAGENT
+         && reaction->product_2 != NO_REAGENT;
+}
+
+void GetReactionString(Reaction_Ptr reaction,
+                       char *return_buf,
+                       int reaction_num) {
+  if (IsUniUni(reaction)) {
+    snprintf(return_buf, 32, "S%d -> S%d              k%d=%lf",
+             reaction->reactant_1,
+             reaction->product_1,
+             reaction_num,
+             reaction->rate_constant);
+  } else if (IsUniBi(reaction)) {
+    snprintf(return_buf, 32, "S%d -> S%d + S%d        k%d=%lf",
+             reaction->reactant_1,
+             reaction->product_1, 
+             reaction->product_2,
+             reaction_num,
+             reaction->rate_constant);
+  } else if (IsBiUni(reaction)) {
+    snprintf(return_buf, 32, "S%d + S%d -> S%d        k%d=%lf",
+             reaction->reactant_1,
+             reaction->reactant_2, 
+             reaction->product_1,
+             reaction_num,
+             reaction->rate_constant);
+  } else {
+    snprintf(return_buf, 32, "S%d + S%d -> S%d + S%d  k%d=%lf",
+             reaction->reactant_1,
+             reaction->reactant_2,
+             reaction->product_1, 
+             reaction->product_2,
+             reaction_num,
+             reaction->rate_constant);
+  }
+}
+
 double GetRateOfChange(Reaction_Ptr reaction, N_Vector concentrations) {
   realtype *concentration_data = NV_DATA_S(concentrations);
-  double rate_of_change = reaction->rate_constant 
+  double rate_of_change = reaction->rate_constant
                           * concentration_data[reaction->reactant_1];
   if (reaction->reactant_2 != NO_REAGENT) {
     rate_of_change *= concentration_data[reaction->reactant_2];

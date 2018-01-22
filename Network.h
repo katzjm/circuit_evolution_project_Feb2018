@@ -22,6 +22,7 @@
 typedef struct network_str {
   Reaction reactions[MAX_NUM_REACTIONS];
   double fitness;
+  int in_network;
   int sources;
   int sinks;
   int num_reactions;
@@ -96,13 +97,21 @@ void CloneNetwork(Network_Ptr cloned_network,
 
 int EvaluateNetwork(Network_Ptr network,
                     Config_Ptr c,
-                    CvodeData_Ptr cvode_data);
+                    CvodeData_Ptr cvode_data,
+                    UserData_Ptr user_data);
+
+void GetNetworkString(Network_Ptr network,
+                      char *return_buf,
+                      const char *pre_reaction,
+                      const char *post_reaction);
 
 bool IsSource(Network_Ptr network, species_t species);
 
 bool IsSink(Network_Ptr network, species_t species);
 
 bool IsChanging(Network_Ptr network, species_t species);
+
+bool IsInNetwork(Network_Ptr network, species_t species);
 
 #endif // _NETWORK_H_
 

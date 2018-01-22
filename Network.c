@@ -23,6 +23,7 @@ static void SetSourcesAndSinks(Network_Ptr network) {
   // reactant or product, respectively. Mark no species initially 
   network->sources = 0;
   network->sinks = 0;
+  network->in_network = 0;
 
   // Mark every species in every reaction
   for (int i = 0; i < network->num_reactions; i++) {
@@ -41,6 +42,7 @@ static void SetSourcesAndSinks(Network_Ptr network) {
   // If a species appears in both sources and sinks it is neither, so remove
   // the mark for that species in both sources and sinks
   int source_and_sink = network->sources & network->sinks;
+  network->in_network = network->sources | network->sinks;
   network->sources &= ~source_and_sink;
   network->sinks &= ~source_and_sink;
 }
@@ -53,8 +55,13 @@ bool IsSink(Network_Ptr network, species_t species) {
   return (network->sinks & (1 << species)) != 0;
 }
 
+bool IsInNetwork(Network_Ptr network, species_t species) {
+  return (network->in_network & (1 << species)) != 0;
+}
+
 bool IsChanging(Network_Ptr network, species_t species) {
   return species != NO_REAGENT
+         && !IsInNetwork(network, species)
          && !IsSource(network, species)
          && !IsSink(network, species);
 }
@@ -151,12 +158,13 @@ static void SetInitialConcentrations(Network_Ptr network,
 
 static void UpdateSpeciesFitnesses(double *species_fitness,
                                    Network_Ptr network,
+                                   double target,
                                    Config_Ptr c,
                                    CvodeData_Ptr cvode_data) {
   for (int i = 0; i < c->num_species; i++) {
     if (IsChanging(network, i)) {
       double found = NV_Ith_S(cvode_data->concentration_mem, i);
-      species_fitness[i] += pow(found - c->outputs[i], 2);
+      species_fitness[i] += pow(found - target, 2);
     } else {
       species_fitness[i] = INFINITY;
     }
@@ -192,7 +200,10 @@ static int EvaluateNetworkVsTime(Network_Ptr network,
         return 1;
       }
     }
-    UpdateSpeciesFitnesses(species_fitness, network, c, cvode_data);
+    UpdateSpeciesFitnesses(species_fitness,
+                           network,
+                           c->outputs[i],
+                           c, cvode_data);
   }
   SetNetworkFitness(network, species_fitness, c);
   return 0;
@@ -200,7 +211,8 @@ static int EvaluateNetworkVsTime(Network_Ptr network,
 
 static int EvaluateNetworkVsConcentration(Network_Ptr network,
                                           Config_Ptr c,
-                                          CvodeData_Ptr cvode_data) {
+                                          CvodeData_Ptr cvode_data,
+                                          UserData_Ptr user_data) {
   realtype t_spacing = 2;
   realtype t_max = 50;
   realtype steady_state_threshold = 0.001;
@@ -223,7 +235,6 @@ static int EvaluateNetworkVsConcentration(Network_Ptr network,
       tout += t_spacing;
 
       if (fabs(t - t_spacing) > DBL_EPSILON) {
-        UserData user_data = { network, c };
         GetSpeciesRateOfChange(t, cvode_data->concentration_mem,
                                species_rate_change, &user_data);
         steady_state_score = N_VL1Norm(species_rate_change);
@@ -236,7 +247,10 @@ static int EvaluateNetworkVsConcentration(Network_Ptr network,
       network->fitness = INFINITY;
       return 1;
     }
-    UpdateSpeciesFitnesses(species_fitness, network, c, cvode_data);
+    UpdateSpeciesFitnesses(species_fitness,
+                           network,
+                           c->outputs[i],
+                           c, cvode_data);
   }
   SetNetworkFitness(network, species_fitness, c);
   N_VDestroy_Serial(species_rate_change);
@@ -245,10 +259,28 @@ static int EvaluateNetworkVsConcentration(Network_Ptr network,
 
 int EvaluateNetwork(Network_Ptr network,
                     Config_Ptr c,
-                    CvodeData_Ptr cvode_data) {
+                    CvodeData_Ptr cvode_data,
+                    UserData_Ptr user_data) {
+  user_data->network = network;
   if (c->time_based) {
     return EvaluateNetworkVsTime(network, c, cvode_data);
   } else {
-    return EvaluateNetworkVsConcentration(network, c, cvode_data);
+    return EvaluateNetworkVsConcentration(network, c, cvode_data, user_data);
+  }
+}
+
+void GetNetworkString(Network_Ptr network,
+                      char *return_buf,
+                      const char *pre_reaction,
+                      const char *post_reaction) {
+  strcpy(return_buf, pre_reaction);
+  for (int i = 0; i < network->num_reactions; i++) {
+    char reaction_buf[32];
+    GetReactionString(&network->reactions[i], reaction_buf, i);
+    if (i != 0) {
+      strncat(return_buf, pre_reaction, 32);
+    }
+    strncat(return_buf, reaction_buf, 32);
+    strncat(return_buf, post_reaction, 32);
   }
 }

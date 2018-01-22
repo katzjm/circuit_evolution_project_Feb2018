@@ -19,7 +19,8 @@ typedef struct population_str {
 
 int SetFirstGeneration(Population_Ptr pop,
                        Config_Ptr config,
-                       CvodeData_Ptr cvode_data);
+                       CvodeData_Ptr cvode_data,
+                       UserData_Ptr user_data);
 
 double BestFitness(Population_Ptr pop);
 
@@ -31,6 +32,7 @@ void KillPopulation(Population_Ptr pop);
 
 int SetNextGeneration(Population_Ptr pop,
                       Config_Ptr c,
-                      CvodeData_Ptr cvode_data);
+                      CvodeData_Ptr cvode_data,
+                      UserData_Ptr user_data);
 
 #endif // _POPULATION_H_

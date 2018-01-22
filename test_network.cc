@@ -28,6 +28,12 @@ TEST_F(Test_Network, TestRandomNetworkSetting) {
   }
 }
 
+TEST_F(Test_Network, TestGetString) {
+  char network_str[256];
+  GetNetworkString(&test_network, network_str, "  ", "\n");
+  printf("%s", network_str);
+}
+
 TEST_F(Test_Network, TestRemoveReactionOK) {
   ASSERT_TRUE(RemoveReaction(&test_network));
   EXPECT_EQ(2, test_network.num_reactions);
@@ -41,7 +47,7 @@ TEST_F(Test_Network, TestEvaluateVsTime) {
   UserData user_data = { &test_network, &c };
 
   SetUpCvodeFirstRun(&cvode_data, &user_data);
-  ASSERT_EQ(0, EvaluateNetwork(&test_network, &c, &cvode_data));
+  ASSERT_EQ(0, EvaluateNetwork(&test_network, &c, &cvode_data, &user_data));
   EXPECT_LE(test_network.fitness, 0.01);
 }
 

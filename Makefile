@@ -10,13 +10,16 @@ LDFLAGS = -L. -L./cvode_libs -levolver -lsundials_cvode -lsundials_nvecserial
 CPPUNITFLAGS = -L./gtest -lgtest
 
 # define common dependencies
-OBJS = Reaction.o Network.o Configs.o Cvode_Utils.o
-HEADERS = Reaction.h Network.h Configs.h Cvode_Utils.h
-TESTOBJS = test_configs.o test_Reaction.o test_network.o test_suite.o test_cvode_utils.o
-TESTHEADERS = test_configs.h test_Reaction.h test_network.h test_cvode_utils.h
+OBJS = Reaction.o Network.o Configs.o Cvode_Utils.o Population.o
+HEADERS = Reaction.h Network.h Configs.h Cvode_Utils.h Population.h
+TESTOBJS = test_configs.o test_Reaction.o test_network.o test_suite.o test_cvode_utils.o test_population.o
+TESTHEADERS = test_configs.h test_Reaction.h test_network.h test_cvode_utils.h test_population.h
 
 # compile everything
-all: test_suite
+all: test_suite evolver
+
+evolver: main.o libevolver.a
+	$(CC) $(CFLAGS) -o $@ $< $(LDFLAGS)
 
 test_suite: $(TESTOBJS) $(TESTHEADERS) libevolver.a
 	$(CXX) $(CFLAGS) -o $@ $(TESTOBJS) $(CPPUNITFLAGS) $(LDFLAGS)

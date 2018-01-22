@@ -34,14 +34,15 @@ int main(int argc, char **argv) {
   }
 
   // Set up Cvode
-  CvodeData cvode_data;
+  N_Vector concentrations = GetNewNVector(&c);
+  CvodeData cvode_data = { NULL, concentrations };
   UserData user_data = { NULL, &c };
   SetUpCvodeFirstRun(&cvode_data, &user_data);
 
   Population pop;
-  SetFirstGeneration(&pop, &c, &cvode_data);
+  SetFirstGeneration(&pop, &c, &cvode_data, &user_data);
   for (int i = 0; i < c.max_num_generations; i++) {
-    if (BestFitness(&pop) > c.fit_threshold) {
+    if (BestFitness(&pop) < c.fit_threshold) {
       break;
     }
 
@@ -51,7 +52,7 @@ int main(int argc, char **argv) {
       printf("Generation: %d, %s\n", i, buf);
     }
 
-    SetNextGeneration(&pop);
+    SetNextGeneration(&pop, &c, &cvode_data, &user_data);
   }
 
   char buf[256];
