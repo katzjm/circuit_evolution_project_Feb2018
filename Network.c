@@ -61,7 +61,7 @@ bool IsInNetwork(Network_Ptr network, species_t species) {
 
 bool IsChanging(Network_Ptr network, species_t species) {
   return species != NO_REAGENT
-         && !IsInNetwork(network, species)
+         && IsInNetwork(network, species)
          && !IsSource(network, species)
          && !IsSink(network, species);
 }

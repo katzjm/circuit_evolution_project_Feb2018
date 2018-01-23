@@ -83,6 +83,7 @@ TEST_F(Test_Network, TestAddTooManyReactions) {
 }
 
 TEST_F(Test_Network, TestIsSource) {
+  EXPECT_FALSE(IsSource(&test_network, 0));
   EXPECT_FALSE(IsSource(&test_network, 1));
   EXPECT_FALSE(IsSource(&test_network, 2));
   EXPECT_TRUE(IsSource(&test_network, 3));
@@ -90,6 +91,7 @@ TEST_F(Test_Network, TestIsSource) {
 }
 
 TEST_F(Test_Network, TestIsSink) {
+  EXPECT_FALSE(IsSink(&test_network, 0));
   EXPECT_FALSE(IsSink(&test_network, 1));
   EXPECT_FALSE(IsSink(&test_network, 2));
   EXPECT_FALSE(IsSink(&test_network, 3));
@@ -97,10 +99,20 @@ TEST_F(Test_Network, TestIsSink) {
 }
 
 TEST_F(Test_Network, TestIsChanging) {
+  EXPECT_FALSE(IsChanging(&test_network, 0));
   EXPECT_TRUE(IsChanging(&test_network, 1));
   EXPECT_TRUE(IsChanging(&test_network, 2));
   EXPECT_FALSE(IsChanging(&test_network, 3));
   EXPECT_FALSE(IsChanging(&test_network, 4));
 }
+
+TEST_F(Test_Network, TestIsInNetwork) {
+  EXPECT_FALSE(IsInNetwork(&test_network, 0));
+  EXPECT_TRUE(IsInNetwork(&test_network, 1));
+  EXPECT_TRUE(IsInNetwork(&test_network, 2));
+  EXPECT_TRUE(IsInNetwork(&test_network, 3));
+  EXPECT_TRUE(IsInNetwork(&test_network, 4));
+}
+
 
 }  // evolvertest
