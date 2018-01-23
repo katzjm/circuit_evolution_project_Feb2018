@@ -6,7 +6,7 @@ ARFLAGS = rcs
 
 # define compilation flags
 CFLAGS += -g -Wall -Wextra -Wpedantic -I. -O0
-LDFLAGS = -L. -L./cvode_libs -levolver -lsundials_cvode -lsundials_nvecserial
+LDFLAGS = -L. -levolver -L./cvode_libs -lsundials_cvode -lsundials_nvecserial
 CPPUNITFLAGS = -L./gtest -lgtest
 
 # define common dependencies
