@@ -145,25 +145,19 @@ static void SetInitialConcentrations(Network_Ptr network,
                                      int data_point) {
   realtype *init_concentration_data = NV_DATA_S(cvode_data->concentration_mem);
 
-  bool source_found = false;
+  bool first_source_found = false;
   if (c->function_type == SQUARE_ROOT || c->function_type == CUBE_ROOT) {
     for (int i = 0; i < c->num_species; i++) {
-      if (c->time_based || source_found || !IsSource(network, i)) {
-        init_concentration_data[i] = c->initial_concentrations;
+      if (IsSource(network, i)) {
+        if (first_source_found) {
+          init_concentration_data[i] = c->initial_concentrations;
+        } else {
+          init_concentration_data[i] = c->inputs[data_point];
+          first_source_found = true;
+        }
       } else {
-        init_concentration_data[i] = c->inputs[data_point];
-        source_found = true;
+        init_concentration_data[i] = 0;
       }
-    }
-  }
-
-
-  for (int i = 0; i < c->num_species; i++) {
-    if (c->time_based || source_found || !IsSource(network, i)) {
-      init_concentration_data[i] = c->initial_concentrations;
-    } else {
-      init_concentration_data[i] = c->inputs[data_point];
-      source_found = true;
     }
   }
 }
@@ -201,8 +195,7 @@ static int EvaluateNetworkVsTime(Network_Ptr network,
   memset(species_fitness, 0, sizeof(species_fitness[0]) * c->num_species);
 
   realtype t = 0;
-  // TODO put SetInitialConcentrations in Cvode Setup because it's necessary for initialization
-  SetInitialConcentrations(network, cvode_data, c, -1);
+  SetInitialConcentrations(network, cvode_data, c, 0);
   SetUpCvodeNextRun(cvode_data);
   for (int i = 0; i < c->num_data_pts; i++) {
     realtype tout = c->inputs[i];

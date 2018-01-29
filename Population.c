@@ -25,6 +25,10 @@ static int CompareNetworks(const void *a, const void *b) {
 static int EvaluatePopulation(Population_Ptr pop, Config_Ptr c) {
   for (int i = 0; i < pop->num_networks; i++) {
     EvaluateNetwork(&pop->networks[i], c, &pop->cvode_data, &pop->user_data);
+    if (pop->networks[i].fitness == INFINITY) {
+      SetRandomNetwork(&pop->networks[i], c);
+      EvaluateNetwork(&pop->networks[i], c, &pop->cvode_data, &pop->user_data);
+    }
   }
   qsort(pop->network_order,
         pop->num_networks,

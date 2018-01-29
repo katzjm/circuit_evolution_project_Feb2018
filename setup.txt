@@ -1,9 +1,9 @@
 fitnessThresholdToStop 0.001
-maxNumberOfGenerations 1000
+maxNumberOfGenerations 5000
 maxNumberOfReactions 5 
 minNumberOfReactions 3
 maxRateConstantPercentVariation 0.01
-maxPopulationSize 10
+maxPopulationSize 50
 probabilityOfUniUni 0.4
 probabilityOfBiUni 0.15
 probabilityOfUniBi 0.15
