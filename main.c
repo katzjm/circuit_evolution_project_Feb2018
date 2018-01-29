@@ -33,26 +33,25 @@ int main(int argc, char **argv) {
     Configure(&c, argv[1]);
   }
 
-  // Set up Cvode
-  N_Vector concentrations = GetNewNVector(&c);
-  CvodeData cvode_data = { NULL, concentrations };
-  UserData user_data = { NULL, &c };
-  SetUpCvodeFirstRun(&cvode_data, &user_data);
-
   Population pop;
-  SetFirstGeneration(&pop, &c, &cvode_data, &user_data);
+  SetFirstGeneration(&pop, &c);
   for (int i = 0; i < c.max_num_generations; i++) {
     if (BestFitness(&pop) < c.fit_threshold) {
       break;
     }
 
     if (i % c.output_interval == 0) {
-      char buf[256];
+      char buf[512];
       GetSmallStatus(&pop, buf);
       printf("Generation: %d, %s\n", i, buf);
+      /*
+      for (int j = 0; j < c.max_pop_size; j++) {
+        GetNetworkString(pop.network_order[j], buf, "  ", "\n");
+        printf("%d. %lf\n%s", j, pop.network_order[j]->fitness, buf);
+      }*/
     }
 
-    SetNextGeneration(&pop, &c, &cvode_data, &user_data);
+    SetNextGeneration(&pop, &c);
   }
 
   char buf[256];

@@ -22,12 +22,9 @@ static int CompareNetworks(const void *a, const void *b) {
   return 0;
 }
 
-static int EvaluatePopulation(Population_Ptr pop,
-                              Config_Ptr c,
-                              CvodeData_Ptr cvode_data,
-                              UserData_Ptr user_data) {
+static int EvaluatePopulation(Population_Ptr pop, Config_Ptr c) {
   for (int i = 0; i < pop->num_networks; i++) {
-    EvaluateNetwork(&pop->networks[i], c, cvode_data, user_data);
+    EvaluateNetwork(&pop->networks[i], c, &pop->cvode_data, &pop->user_data);
   }
   qsort(pop->network_order,
         pop->num_networks,
@@ -36,57 +33,64 @@ static int EvaluatePopulation(Population_Ptr pop,
   return 0;
 }
 
-int SetFirstGeneration(Population_Ptr pop,
-                       Config_Ptr config,
-                       CvodeData_Ptr cvode_data,
-                       UserData_Ptr user_data) {
-  pop->num_networks = config->max_pop_size;
+int SetFirstGeneration(Population_Ptr pop, Config_Ptr c) {
+  pop->num_networks = c->max_pop_size;
   pop->network_order = (Network_Ptr*)
                        malloc(sizeof(Network_Ptr) * pop->num_networks);
   pop->networks = (Network_Ptr) malloc(sizeof(Network) * pop->num_networks);
-
   if (pop->networks == NULL || pop->network_order == NULL) {
     return 1;
   }
 
   for (int i = 0; i < pop->num_networks; i++) {
-    SetRandomNetwork(&pop->networks[i], config);
+    SetRandomNetwork(&pop->networks[i], c);
     pop->network_order[i] = &pop->networks[i];
   }
-  EvaluatePopulation(pop, config, cvode_data, user_data);
+  
+  pop->concentrations = GetNewNVector(c);
+  pop->cvode_data.cvode_mem = NULL;
+  pop->cvode_data.concentration_mem = pop->concentrations;
+  pop->user_data.network = &pop->networks[0];
+  pop->user_data.config = c;
+  SetUpCvodeFirstRun(&pop->cvode_data, &pop->user_data);
+
+  EvaluatePopulation(pop, c);
   return 0;
 }
 
 void KillPopulation(Population_Ptr pop) {
   free(pop->networks);
-  free(pop->network_order);
   pop->networks = NULL;
+
+  free(pop->network_order);
   pop->network_order = NULL;
+
   pop->num_networks = 0;
+
+  DestroyCvode(&pop->cvode_data);
 }
 
 double BestFitness(Population_Ptr pop) {
   return pop->network_order[0]->fitness;
 }
 
-int SetNextGeneration(Population_Ptr pop,
-                      Config_Ptr c,
-                      CvodeData_Ptr cvode_data,
-                      UserData_Ptr user_data) {
+int SetNextGeneration(Population_Ptr pop, Config_Ptr c) {
   Network_Ptr new_networks = (Network_Ptr) 
                              malloc(sizeof(Network) * pop->num_networks);
 
-  new_networks[0] = pop->networks[0];
+  new_networks[0] = *pop->network_order[0];
+  pop->network_order[0] = &new_networks[0];
   for (int i = 1; i < pop->num_networks; i++) {
     int cloned_network_index = fmin(rand() % pop->num_networks,
                                     rand() % pop->num_networks);
-    new_networks[i] = pop->networks[cloned_network_index];
+    new_networks[i] = *pop->network_order[cloned_network_index];
+    pop->network_order[i] = &new_networks[i];
     MutateNetwork(&new_networks[i], c);
   }
   
   free(pop->networks);
   pop->networks = new_networks;
-  EvaluatePopulation(pop, c, cvode_data, user_data);
+  EvaluatePopulation(pop, c);
   return 0;
 }
 
