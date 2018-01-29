@@ -146,11 +146,23 @@ static void SetInitialConcentrations(Network_Ptr network,
   realtype *init_concentration_data = NV_DATA_S(cvode_data->concentration_mem);
 
   bool source_found = false;
+  if (c->function_type == SQUARE_ROOT || c->function_type == CUBE_ROOT) {
+    for (int i = 0; i < c->num_species; i++) {
+      if (c->time_based || source_found || !IsSource(network, i)) {
+        init_concentration_data[i] = c->initial_concentrations;
+      } else {
+        init_concentration_data[i] = c->inputs[data_point];
+        source_found = true;
+      }
+    }
+  }
+
+
   for (int i = 0; i < c->num_species; i++) {
     if (c->time_based || source_found || !IsSource(network, i)) {
       init_concentration_data[i] = c->initial_concentrations;
     } else {
-      init_concentration_data[i] = c->outputs[data_point];
+      init_concentration_data[i] = c->inputs[data_point];
       source_found = true;
     }
   }
