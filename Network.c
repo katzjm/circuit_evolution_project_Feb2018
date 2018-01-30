@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "nvector/nvector_serial.h"
@@ -288,4 +289,16 @@ void GetNetworkString(Network_Ptr network,
     strncat(return_buf, reaction_buf, 32);
     strncat(return_buf, post_reaction, 32);
   }
+
+  char buf[512];
+  for (int i = 0; i < network->num_reactions; i++) {
+    if (i % 4 == 0) {
+      strncat(return_buf, "\n", 2);
+      strncat(return_buf, pre_reaction, 32);
+    }
+    sprintf(buf, "k%d = %lf; ", i, network->reactions[i].rate_constant);
+    strncat(return_buf, buf, 32);
+  }
+
+  
 }

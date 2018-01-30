@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
     SetNextGeneration(&pop, &c);
   }
 
-  char buf[256];
+  char buf[2048];
   GetLargeStatus(&pop, buf);
   printf("%s", buf);
 

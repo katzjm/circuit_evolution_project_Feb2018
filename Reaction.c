@@ -114,33 +114,35 @@ void GetReactionString(Reaction_Ptr reaction,
                        char *return_buf,
                        int reaction_num) {
   if (IsUniUni(reaction)) {
-    snprintf(return_buf, 32, "S%d -> S%d              k%d=%lf",
+    snprintf(return_buf, 32, "S%d -> S%d;            k%d*S%d",
              reaction->reactant_1,
              reaction->product_1,
              reaction_num,
-             reaction->rate_constant);
+             reaction->reactant_1);
   } else if (IsUniBi(reaction)) {
-    snprintf(return_buf, 32, "S%d -> S%d + S%d        k%d=%lf",
+    snprintf(return_buf, 32, "S%d -> S%d + S%d;       k%d*S%d",
              reaction->reactant_1,
              reaction->product_1, 
              reaction->product_2,
              reaction_num,
-             reaction->rate_constant);
+             reaction->reactant_1);
   } else if (IsBiUni(reaction)) {
-    snprintf(return_buf, 32, "S%d + S%d -> S%d        k%d=%lf",
+    snprintf(return_buf, 32, "S%d + S%d -> S%d;       k%d*S%d*S%d",
              reaction->reactant_1,
              reaction->reactant_2, 
              reaction->product_1,
              reaction_num,
-             reaction->rate_constant);
+             reaction->reactant_1,
+             reaction->reactant_2);
   } else {
-    snprintf(return_buf, 32, "S%d + S%d -> S%d + S%d  k%d=%lf",
+    snprintf(return_buf, 32, "S%d + S%d -> S%d + S%d;  k%d*S%d*S%d",
              reaction->reactant_1,
              reaction->reactant_2,
              reaction->product_1, 
              reaction->product_2,
              reaction_num,
-             reaction->rate_constant);
+             reaction->reactant_1,
+             reaction->reactant_2);
   }
 }
 

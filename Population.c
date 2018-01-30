@@ -103,7 +103,9 @@ void GetSmallStatus(Population_Ptr pop, char *returnbuf) {
 }
 
 void GetLargeStatus(Population_Ptr pop, char *returnbuf) {
-  sprintf(returnbuf, "Fittest: %lf", BestFitness(pop));
+  char buf[1024];
+  GetNetworkString(pop->network_order[0], buf, "   ", "\n"); 
+  sprintf(returnbuf, "Fittest: \n%s", buf);
 }
 
 

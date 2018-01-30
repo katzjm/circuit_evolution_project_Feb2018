@@ -1,5 +1,5 @@
 fitnessThresholdToStop 0.001
-maxNumberOfGenerations 5000
+maxNumberOfGenerations 1000
 maxNumberOfReactions 5 
 minNumberOfReactions 3
 maxRateConstantPercentVariation 0.01
