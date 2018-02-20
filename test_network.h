@@ -20,7 +20,7 @@ namespace evolvertest {
 class Test_Network : public ::testing::Test {
  protected:
   Test_Network() {
-    Configure(&c, NULL);
+    Configure(&c, "test-files/test_network_generic.txt");
     Reaction rs[3];
     SetReaction(&rs[0], 1, 1, 2, NO_REAGENT, 2.0);
     SetReaction(&rs[1], 3, NO_REAGENT, 2, NO_REAGENT, 2.0);

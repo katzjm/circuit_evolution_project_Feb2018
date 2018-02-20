@@ -18,7 +18,7 @@ namespace evolvertest {
 class Test_Configs : public ::testing::Test {
  protected:
   Test_Configs() {
-    test_file = "test-configs/setup.txt";
+    test_file = "test-files/setup.txt";
   }
 
   virtual ~Test_Configs() {}

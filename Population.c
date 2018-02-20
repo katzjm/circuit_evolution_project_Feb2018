@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 
 #include "Population.h"
@@ -98,14 +99,22 @@ int SetNextGeneration(Population_Ptr pop, Config_Ptr c) {
   return 0;
 }
 
-void GetSmallStatus(Population_Ptr pop, char *returnbuf) {
-  sprintf(returnbuf, "Fittest: %lf", BestFitness(pop));
+void GetSmallStatus(Population_Ptr pop, char *return_buf) {
+  sprintf(return_buf, "Fittest: %lf", BestFitness(pop));
 }
 
-void GetLargeStatus(Population_Ptr pop, char *returnbuf) {
-  char buf[1024];
-  GetNetworkString(pop->network_order[0], buf, "   ", "\n"); 
-  sprintf(returnbuf, "Fittest: \n%s", buf);
-}
+void GetLargeStatus(Population_Ptr pop, char *return_buf, Config_Ptr c) {
+  char network_buf[1024];
+  char concentration_buf[512];
+  GetNetworkString(pop->network_order[0], network_buf, "   ", "\n"); 
+  sprintf(return_buf, "Fittest: \n%s", network_buf);
 
+  strncat(return_buf, "\n   ", 10);
+  SetInitialConcentrations(pop->network_order[0], &pop->cvode_data, c, 0);
+  for (int i = 0; i < c->num_species; i++) {
+    sprintf(concentration_buf, "S%d = %lf; ", i, NV_Ith_S(pop->concentrations, i));
+    strncat(return_buf, concentration_buf, 32);
+  }
+  strncat(return_buf, "\n", 2);
+}
 

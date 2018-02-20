@@ -28,6 +28,10 @@ typedef struct network_str {
   int num_reactions;
 } Network, *Network_Ptr;
 
+/////////////////////////////
+// Network Setting Methods //
+/////////////////////////////
+
 // Fills the given network with a random number of random reactions with
 // constraints outlined in the other parameters
 //
@@ -51,6 +55,10 @@ void SetNetwork(Network_Ptr network,
                 Reaction_Ptr reactions,
                 double fitness,
                 int num_reactions);
+
+//////////////////////////////
+// Network Altering Methods //
+//////////////////////////////
 
 // Alters the given Network. The Network may have a Reaction added, taken away,
 // or have a rate contoustant changed, with the probability of each mutation
@@ -91,19 +99,32 @@ bool RemoveReaction(Network_Ptr network);
 //                parameters. See Config.h
 void ModifyRateConstant(Network_Ptr network, Config_Ptr config);
 
-void CloneNetwork(Network_Ptr cloned_network,
-                  Network_Ptr new_network,
-                  Config_Ptr c);
+void SetInitialConcentrations(Network_Ptr network,
+                              CvodeData_Ptr cvode_data,
+                              Config_Ptr c,
+                              int data_point);
+
+////////////////////////////////
+// Network Evaluation Method //
+////////////////////////////////
 
 int EvaluateNetwork(Network_Ptr network,
                     Config_Ptr c,
                     CvodeData_Ptr cvode_data,
                     UserData_Ptr user_data);
 
+/////////////////////
+// toString method //
+/////////////////////
+
 void GetNetworkString(Network_Ptr network,
                       char *return_buf,
                       const char *pre_reaction,
                       const char *post_reaction);
+
+//////////////////////////////////////////////
+// Network Source and Sink Checking methods //
+//////////////////////////////////////////////
 
 bool IsSource(Network_Ptr network, species_t species);
 

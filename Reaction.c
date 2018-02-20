@@ -5,6 +5,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>    // for rand
 #include <assert.h>    // for assert
 #include <math.h>      // for fmod
@@ -112,41 +113,51 @@ bool IsBiBi(Reaction_Ptr reaction) {
 
 void GetReactionString(Reaction_Ptr reaction,
                        char *return_buf,
+                       bool fixed[],
                        int reaction_num) {
-  if (IsUniUni(reaction)) {
-    snprintf(return_buf, 32, "S%d -> S%d;            k%d*S%d",
-             reaction->reactant_1,
-             reaction->product_1,
-             reaction_num,
-             reaction->reactant_1);
-  } else if (IsUniBi(reaction)) {
-    snprintf(return_buf, 32, "S%d -> S%d + S%d;       k%d*S%d",
-             reaction->reactant_1,
-             reaction->product_1, 
-             reaction->product_2,
-             reaction_num,
-             reaction->reactant_1);
-  } else if (IsBiUni(reaction)) {
-    snprintf(return_buf, 32, "S%d + S%d -> S%d;       k%d*S%d*S%d",
-             reaction->reactant_1,
-             reaction->reactant_2, 
-             reaction->product_1,
-             reaction_num,
-             reaction->reactant_1,
-             reaction->reactant_2);
+  char buf[32];
+  char rate_constant_buf[32];
+  if (fixed[0]) {
+    sprintf(return_buf, "$S%d ", reaction->reactant_1);
   } else {
-    snprintf(return_buf, 32, "S%d + S%d -> S%d + S%d;  k%d*S%d*S%d",
-             reaction->reactant_1,
-             reaction->reactant_2,
-             reaction->product_1, 
-             reaction->product_2,
-             reaction_num,
-             reaction->reactant_1,
-             reaction->reactant_2);
+    sprintf(return_buf, "S%d ", reaction->reactant_1);
   }
+
+  sprintf(rate_constant_buf, ";  k%d*S%d", reaction_num, reaction->reactant_1);
+
+  if (IsBiUni(reaction) || IsBiBi(reaction)) {
+    if (fixed[1]) {
+      sprintf(buf, "+ $S%d ", reaction->reactant_2);
+    } else {
+      sprintf(buf, "+ S%d ", reaction->reactant_2);
+    }
+    strncat(return_buf, buf, 32);
+    sprintf(buf, "*S%d", reaction->reactant_2);
+    strncat(rate_constant_buf, buf, 32);
+  }
+
+  if (fixed[2]) {
+    sprintf(buf, "-> $S%d", reaction->product_1);
+  } else {
+    sprintf(buf, "-> S%d", reaction->product_1);
+  }
+  
+  strncat(return_buf, buf, 32);
+  
+  if (IsUniBi(reaction) || IsBiBi(reaction)) {
+    if (fixed[3]) {
+      sprintf(buf, " + $S%d", reaction->product_2);
+    } else {
+      sprintf(buf, " + S%d", reaction->product_2);
+    }
+    strncat(return_buf, buf, 32);
+  }
+
+  strncat(return_buf, rate_constant_buf, 32);
 }
 
-double GetRateOfChange(Reaction_Ptr reaction, N_Vector concentrations) {
+double GetRateOfChange(Reaction_Ptr reaction,
+                       N_Vector concentrations) {
   realtype *concentration_data = NV_DATA_S(concentrations);
   double rate_of_change = reaction->rate_constant
                           * concentration_data[reaction->reactant_1];

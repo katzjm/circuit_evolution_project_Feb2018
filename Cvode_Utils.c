@@ -17,12 +17,20 @@
 #include "Network.h"
 #include "Reaction.h"
 
+/////////////////////////////////
+// Basic Error Checking Method //
+/////////////////////////////////
+
 static void CheckSuccess(int flag, const char *error_message) {
   if (flag != CV_SUCCESS) {
     printf("%s", error_message);
     exit(EXIT_FAILURE);
   }
 }
+
+////////////////////////////////////////////////
+// Methods For Setting Up CVode for a new ODE //
+////////////////////////////////////////////////
 
 void SetUpCvodeFirstRun(CvodeData_Ptr cvode_data, UserData_Ptr user_data) {
   int flag;
@@ -55,6 +63,16 @@ void SetUpCvodeFirstRun(CvodeData_Ptr cvode_data, UserData_Ptr user_data) {
   CheckSuccess(flag, "Failed CVDense Initialization");
 }
 
+void SetUpCvodeNextRun(CvodeData_Ptr cvode_data) {
+  int flag = CVodeReInit(cvode_data->cvode_mem, 0,
+                         cvode_data->concentration_mem);
+  CheckSuccess(flag, "Failed to Reinitialize CVode");
+}
+
+////////////////////////////////////////////////////
+// Network to Jacobian function used to run CVode //
+////////////////////////////////////////////////////
+
 int GetSpeciesRateOfChange(realtype t,
                            N_Vector concentrations,
                            N_Vector rate_of_change,
@@ -86,20 +104,26 @@ int GetSpeciesRateOfChange(realtype t,
   return 0;
 }
 
-void SetUpCvodeNextRun(CvodeData_Ptr cvode_data) {
-  int flag = CVodeReInit(cvode_data->cvode_mem, 0,
-                         cvode_data->concentration_mem);
-  CheckSuccess(flag, "Failed to Reinitialize CVode");
-}
+////////////////
+// ODE Solver //
+////////////////
 
 bool RunCvode(CvodeData_Ptr cvode_data, realtype tout, realtype *t) {
   return CVode(cvode_data->cvode_mem, tout,
                cvode_data->concentration_mem, t, CV_NORMAL) == CV_SUCCESS;
 }
 
+/////////////////////
+// Cvode Destroyer //
+/////////////////////
+
 void DestroyCvode(CvodeData_Ptr cvode_data) {
   CVodeFree(&cvode_data->cvode_mem);
 }
+
+////////////////////////////////////////
+// N_Vector Constructor and Destroyer //
+////////////////////////////////////////
 
 N_Vector GetNewNVector(Config_Ptr c) {
   return N_VNew_Serial(c->num_species);

@@ -12,6 +12,8 @@
 
 enum FitType {
   CUSTOM,
+  SQUARE,
+  CUBE,
   SQUARE_ROOT,
   CUBE_ROOT,
   OSCILLATOR,

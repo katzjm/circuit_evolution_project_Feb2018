@@ -34,7 +34,7 @@ TEST_F(Test_Population, TestRepeatGenerations) {
   char network_buf[512];
   
   ASSERT_EQ(0, SetFirstGeneration(&pop, &c));
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < 2; i++) {
     for (int i = 0; i < c.max_pop_size; i++) {
       printf("%d. %lf\n", i + 1, pop.network_order[i]->fitness);
       GetNetworkString(pop.network_order[i], network_buf, "  ", "\n");

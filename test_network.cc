@@ -28,6 +28,26 @@ TEST_F(Test_Network, TestRandomNetworkSetting) {
   }
 }
 
+TEST_F(Test_Network, TestOscillator) {
+  Config c_o;
+  Configure(&c_o, "test-files/test_network_oscillator.txt");
+  
+  Reaction ro[3];
+  Network oscillator;
+  SetReaction(&ro[0], 0, 1, 1, 1, 1.0);
+  SetReaction(&ro[1], 1, 2, 2, 2, 1.0); 
+  SetReaction(&ro[2], 2, NO_REAGENT, 3, NO_REAGENT, 1.0);
+  SetNetwork(&oscillator, ro, 0, 3);
+
+  N_Vector concentrations = GetNewNVector(&c_o);
+  CvodeData cvode_data = { NULL, concentrations };
+  UserData user_data = { &oscillator, &c_o };
+
+  SetUpCvodeFirstRun(&cvode_data, &user_data);
+  ASSERT_EQ(0, EvaluateNetwork(&oscillator, &c_o, &cvode_data, &user_data));
+  EXPECT_LE(oscillator.fitness, 0.01);
+}
+
 TEST_F(Test_Network, TestGetString) {
   char network_str[256];
   GetNetworkString(&test_network, network_str, "  ", "\n");

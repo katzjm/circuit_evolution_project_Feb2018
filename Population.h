@@ -26,7 +26,7 @@ double BestFitness(Population_Ptr pop);
 
 void GetSmallStatus(Population_Ptr pop, char *returnbuf);
 
-void GetLargeStatus(Population_Ptr pop, char *returnbuf);
+void GetLargeStatus(Population_Ptr pop, char *returnbuf, Config_Ptr c);
 
 void KillPopulation(Population_Ptr pop);
 

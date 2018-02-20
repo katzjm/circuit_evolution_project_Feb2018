@@ -107,6 +107,7 @@ bool IsBiBi(Reaction_Ptr reaction);
 
 void GetReactionString(Reaction_Ptr reaction,
                        char *return_buf,
+                       bool fixed[],
                        int reaction_num);
 
 double GetRateOfChange(Reaction_Ptr reaction, N_Vector concentrations);

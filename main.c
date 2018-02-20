@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "Configs.h"
 #include "Cvode_Utils.h"
@@ -44,18 +45,13 @@ int main(int argc, char **argv) {
       char buf[512];
       GetSmallStatus(&pop, buf);
       printf("Generation: %d, %s\n", i, buf);
-      /*
-      for (int j = 0; j < c.max_pop_size; j++) {
-        GetNetworkString(pop.network_order[j], buf, "  ", "\n");
-        printf("%d. %lf\n%s", j, pop.network_order[j]->fitness, buf);
-      }*/
     }
 
     SetNextGeneration(&pop, &c);
   }
 
-  char buf[2048];
-  GetLargeStatus(&pop, buf);
+  char buf[5096];
+  GetLargeStatus(&pop, buf, &c);
   printf("%s", buf);
 
   KillPopulation(&pop);

@@ -17,7 +17,7 @@ static void SetTestData(Config_Ptr c) {
   c->outputs = (double *) malloc(sizeof(double) * c->num_data_pts);
   
   switch (c->function_type) {
-    case SQUARE_ROOT: 
+    case SQUARE: 
       {
         for (int i = 0; i < c->num_data_pts; i++) {
           c->inputs[i] = i;
@@ -25,7 +25,7 @@ static void SetTestData(Config_Ptr c) {
         }
         break; 
       }
-    case CUBE_ROOT:
+    case CUBE:
       {
         for (int i = 0; i < c->num_data_pts; i++) {
           c->inputs[i] = i;
@@ -33,8 +33,30 @@ static void SetTestData(Config_Ptr c) {
         }
         break;
       }
-    case OSCILLATOR: // TODO
-      break;
+    case SQUARE_ROOT:
+      {
+        for (int i = 0; i < c->num_data_pts; i++) {
+          c->inputs[i] = i * i;
+          c->outputs[i] = i;
+        }
+        break;
+      }
+    case CUBE_ROOT:
+      {
+        for (int i = 0; i < c->num_data_pts; i++) {
+          c->inputs[i] = i * i * i;
+          c->outputs[i] = i;
+        }
+        break;
+      }
+    case OSCILLATOR:
+      {
+        for (int i = 0; i < c->num_data_pts; i++) {
+          c->inputs[i] = i;
+          c->outputs[i] = c->initial_concentrations + (i + 1) % 3 - 1;
+        }
+        break;
+      }
     case TRANSISTOR: // TODO
       break;
     case CUSTOM: 

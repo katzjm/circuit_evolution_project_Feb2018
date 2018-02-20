@@ -9,9 +9,10 @@ probabilityOfBiUni 0.15
 probabilityOfUniBi 0.15
 probabilityOfBiBi 0.3
 maxInitialRateConstant 50.0
-numDataPoints 10
+numDataPoints 6
+testPtFile test_pts.txt
 maxNumberOfSpecies 5
-fitType 1
+fitType 0
 intervalForOutput 10
 addReactionMutation 0.275
 deleteReactionMutation 0.225
@@ -20,3 +21,4 @@ seed 1508215203
 initialConcentrations 5.0
 showCVodeErrors 0
 timeBased 1
+

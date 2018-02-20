@@ -19,6 +19,10 @@
 #include "Configs.h"
 #include "Cvode_Utils.h"
 
+////////////////////////////////////////////
+// Network Source and Sink Setting method //
+////////////////////////////////////////////
+
 static void SetSourcesAndSinks(Network_Ptr network) {
   // Initially sources and sinks simply mark whether a species appears as a
   // reactant or product, respectively. Mark no species initially 
@@ -48,6 +52,10 @@ static void SetSourcesAndSinks(Network_Ptr network) {
   network->sinks &= ~source_and_sink;
 }
 
+//////////////////////////////////////////////
+// Network Source and Sink Checking methods //
+//////////////////////////////////////////////
+
 bool IsSource(Network_Ptr network, species_t species) {
   return (network->sources & (1 << species)) != 0;
 }
@@ -67,15 +75,21 @@ bool IsChanging(Network_Ptr network, species_t species) {
          && !IsSink(network, species);
 }
 
+/////////////////////////////
+// Network Setting Methods //
+/////////////////////////////
 
 void SetRandomNetwork(Network_Ptr network, Config_Ptr config) {
   int reaction_range = config->max_num_reactions - config->min_num_reactions;
   network->num_reactions = rand() % reaction_range + config->min_num_reactions;
   network->fitness = INFINITY;
-  for (int i = 0; i < network->num_reactions; i++) {
-    SetRandomReaction(&network->reactions[i], config);
-  }
-  SetSourcesAndSinks(network);
+
+  do {
+    for (int i = 0; i < network->num_reactions; i++) {
+      SetRandomReaction(&network->reactions[i], config);
+    }
+    SetSourcesAndSinks(network);
+  } while (network->sources == 0 || network->sinks == 0);
 }
 
 // Simple min function. Should not be used when either x or y need to be
@@ -88,6 +102,7 @@ void SetNetwork(Network_Ptr network,
                 int num_reactions) {
   network->num_reactions = min(num_reactions, MAX_NUM_REACTIONS);
   network->fitness = fitness;
+
   for (int i = 0; i < network->num_reactions; i++) {
     network->reactions[i] = reactions[i];
   }
@@ -95,6 +110,10 @@ void SetNetwork(Network_Ptr network,
 }
 
 #undef min
+
+//////////////////////////////
+// Network Altering Methods //
+//////////////////////////////
 
 void MutateNetwork(Network_Ptr network, Config_Ptr config) {
   float mutation = (float) rand() / RAND_MAX;
@@ -108,6 +127,9 @@ void MutateNetwork(Network_Ptr network, Config_Ptr config) {
 
   if (mutation > 0 || network_changed == false) {
     ModifyRateConstant(network, config);
+  }
+  if (network->sources == 0 || network->sinks == 0) {
+    SetRandomNetwork(network, config);
   }
 }
 
@@ -140,14 +162,15 @@ void ModifyRateConstant(Network_Ptr network, Config_Ptr config) {
   MutateRateConstant(&network->reactions[reaction_to_change], config);
 }
 
-static void SetInitialConcentrations(Network_Ptr network,
-                                     CvodeData_Ptr cvode_data,
-                                     Config_Ptr c,
-                                     int data_point) {
+void SetInitialConcentrations(Network_Ptr network,
+                              CvodeData_Ptr cvode_data,
+                              Config_Ptr c,
+                              int data_point) {
   realtype *init_concentration_data = NV_DATA_S(cvode_data->concentration_mem);
 
   bool first_source_found = false;
-  if (c->function_type == SQUARE_ROOT || c->function_type == CUBE_ROOT) {
+  if (c->function_type == SQUARE_ROOT || c->function_type == CUBE_ROOT
+      || c->function_type == CUBE || c->function_type == SQUARE) {
     for (int i = 0; i < c->num_species; i++) {
       if (IsSource(network, i)) {
         if (first_source_found) {
@@ -160,8 +183,16 @@ static void SetInitialConcentrations(Network_Ptr network,
         init_concentration_data[i] = 0;
       }
     }
+  } else if (c->function_type == OSCILLATOR || c->function_type == CUSTOM) {
+    for (int i = 0; i < c->num_species; i++) {
+      init_concentration_data[i] = c->initial_concentrations;
+    }
   }
 }
+
+////////////////////////////////
+// Network Evaluation Methods //
+////////////////////////////////
 
 static void UpdateSpeciesFitnesses(double *species_fitness,
                                    Network_Ptr network,
@@ -188,6 +219,7 @@ static void SetNetworkFitness(Network_Ptr network,
     }
   }
 }
+
 
 static int EvaluateNetworkVsTime(Network_Ptr network,
                                  Config_Ptr c,
@@ -225,7 +257,7 @@ static int EvaluateNetworkVsConcentration(Network_Ptr network,
 
   double species_fitness[c->num_species];
   memset(species_fitness, 0, sizeof(species_fitness[0]) * c->num_species);
-  N_Vector species_rate_change = N_VNew_Serial(c->num_species);
+  N_Vector species_rate_change = GetNewNVector(c);
   for (int i = 0; i < c->num_data_pts; i++) {
     SetInitialConcentrations(network, cvode_data, c, i);
     SetUpCvodeNextRun(cvode_data);
@@ -242,7 +274,7 @@ static int EvaluateNetworkVsConcentration(Network_Ptr network,
 
       if (fabs(t - t_spacing) > DBL_EPSILON) {
         GetSpeciesRateOfChange(t, cvode_data->concentration_mem,
-                               species_rate_change, &user_data);
+                               species_rate_change, user_data);
         steady_state_score = N_VL1Norm(species_rate_change);
       } else {
         steady_state_score = INFINITY;
@@ -275,14 +307,26 @@ int EvaluateNetwork(Network_Ptr network,
   }
 }
 
+/////////////////////
+// toString method //
+/////////////////////
+
 void GetNetworkString(Network_Ptr network,
                       char *return_buf,
                       const char *pre_reaction,
                       const char *post_reaction) {
   strcpy(return_buf, pre_reaction);
   for (int i = 0; i < network->num_reactions; i++) {
+    Reaction_Ptr reaction = &network->reactions[i];
     char reaction_buf[32];
-    GetReactionString(&network->reactions[i], reaction_buf, i);
+
+    bool fixed[4];
+    fixed[0] = !IsChanging(network, reaction->reactant_1);
+    fixed[1] = !IsChanging(network, reaction->reactant_2);
+    fixed[2] = !IsChanging(network, reaction->product_1);
+    fixed[3] = !IsChanging(network, reaction->product_2);
+
+    GetReactionString(reaction, reaction_buf, fixed, i);
     if (i != 0) {
       strncat(return_buf, pre_reaction, 32);
     }
@@ -299,6 +343,5 @@ void GetNetworkString(Network_Ptr network,
     sprintf(buf, "k%d = %lf; ", i, network->reactions[i].rate_constant);
     strncat(return_buf, buf, 32);
   }
-
-  
 }
+
