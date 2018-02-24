@@ -97,12 +97,16 @@ void SetReaction(Reaction_Ptr reaction,
 //               See Config.h
 void MutateRateConstant(Reaction_Ptr reaction, Config_Ptr config);
 
+// Returns true is the reaction is uniuni, false otherwise
 bool IsUniUni(Reaction_Ptr reaction);
 
+// Returns true is the reaction is unibi, false otherwise
 bool IsUniBi(Reaction_Ptr reaction);
 
+// Returns true is the reaction is biuni, false otherwise
 bool IsBiUni(Reaction_Ptr reaction);
 
+// Returns true is the reaction is bibi, false otherwise
 bool IsBiBi(Reaction_Ptr reaction);
 
 void GetReactionString(Reaction_Ptr reaction,
@@ -110,6 +114,8 @@ void GetReactionString(Reaction_Ptr reaction,
                        bool fixed[],
                        int reaction_num);
 
+// Returns the mass law rate for the given reaction with
+// the given concentrations
 double GetRateOfChange(Reaction_Ptr reaction, N_Vector concentrations);
 
 #endif // _REACTION_H_

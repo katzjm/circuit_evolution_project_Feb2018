@@ -53,6 +53,7 @@ typedef struct config_str {
 
   /* Population Generation Paremters */
   double fit_threshold;
+  double percentage_clone;
   int max_num_generations;
 
   /* Output Parameters */
@@ -64,7 +65,16 @@ typedef struct config_str {
 
 } Config, *Config_Ptr;
 
-
+/* Configure the given Config struct using parameters from the given
+ * file. If there is an error reading from the file, quits the program.
+ * If the parameters do not make sense (i.e. the sum of the probabilites of
+ * mutating a given network do not sum to 1), quits the program
+ * 
+ * Parameters:
+ *      c - The configuration struct that gets filled with parameters
+ *      file_name - The name of the file contianing parameters for running
+ *                  evolver
+ */
 void Configure(Config_Ptr c, const char *file_name);
 
 #endif // _CONFIG_H_

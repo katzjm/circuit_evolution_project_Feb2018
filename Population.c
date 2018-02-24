@@ -25,30 +25,34 @@ static int CompareNetworks(const void *a, const void *b) {
 
 static int EvaluatePopulation(Population_Ptr pop, Config_Ptr c) {
   for (int i = 0; i < pop->num_networks; i++) {
-    EvaluateNetwork(&pop->networks[i], c, &pop->cvode_data, &pop->user_data);
-    if (pop->networks[i].fitness == INFINITY) {
-      SetRandomNetwork(&pop->networks[i], c);
-      EvaluateNetwork(&pop->networks[i], c, &pop->cvode_data, &pop->user_data);
+    EvaluateNetwork(pop->network_order[i], c, &pop->cvode_data, &pop->user_data);
+    if (pop->network_order[i]->fitness == INFINITY) {
+      SetRandomNetwork(pop->network_order[i], c);
+      EvaluateNetwork(pop->network_order[i], c, &pop->cvode_data, &pop->user_data);
     }
   }
-  qsort(pop->network_order,
-        pop->num_networks,
-        sizeof(Network_Ptr),
+  qsort(pop->network_order, pop->num_networks, sizeof(Network_Ptr),
         CompareNetworks);
   return 0;
 }
 
 int SetFirstGeneration(Population_Ptr pop, Config_Ptr c) {
   pop->num_networks = c->max_pop_size;
-  pop->network_order = (Network_Ptr*)
-                       malloc(sizeof(Network_Ptr) * pop->num_networks);
   pop->networks = (Network_Ptr) malloc(sizeof(Network) * pop->num_networks);
-  if (pop->networks == NULL || pop->network_order == NULL) {
+  pop->network_order = (Network_Ptr*) malloc(sizeof(Network_Ptr) * pop->num_networks);
+  pop->old_networks = (Network_Ptr) malloc(sizeof(Network) * pop->num_networks);
+  pop->old_network_order = (Network_Ptr*) malloc(sizeof(Network_Ptr) * pop->num_networks);
+
+  if (pop->networks == NULL || pop->network_order == NULL
+      || pop->old_networks == NULL || pop->old_network_order == NULL) {
     return 1;
   }
 
   for (int i = 0; i < pop->num_networks; i++) {
     SetRandomNetwork(&pop->networks[i], c);
+    if (&pop->networks[i] == NULL) {
+      printf("\n\nfailure on setfirst at index %d\n\n", i);
+    }
     pop->network_order[i] = &pop->networks[i];
   }
   
@@ -57,18 +61,56 @@ int SetFirstGeneration(Population_Ptr pop, Config_Ptr c) {
   pop->cvode_data.concentration_mem = pop->concentrations;
   pop->user_data.network = &pop->networks[0];
   pop->user_data.config = c;
+  
   SetUpCvodeFirstRun(&pop->cvode_data, &pop->user_data);
+  EvaluatePopulation(pop, c);
 
+  return 0;
+}
+
+int SetNextGeneration(Population_Ptr pop, Config_Ptr c) {
+  void *temp = pop->networks;
+  pop->networks = pop->old_networks;
+  pop->old_networks = temp;
+
+  temp = pop->network_order;
+  pop->network_order = pop->old_network_order;
+  pop->old_network_order = temp;
+
+  int num_clones = c->percentage_clone * pop->num_networks;
+  for (int i = 0; i < num_clones; i++) {
+    pop->networks[i] = *pop->old_network_order[i];
+    pop->network_order[i] = &pop->networks[i];
+  }
+
+  for (int i = num_clones; i < pop->num_networks; i++) {
+    int n1 = rand() % pop->num_networks;
+    int n2 = rand() % pop->num_networks;
+    int cloned_network_index = fmin(n1, n2);
+    
+    pop->networks[i] = *pop->old_network_order[cloned_network_index];
+    pop->network_order[i] = &pop->networks[i];
+  }
+
+  for (int i = 1; i < pop->num_networks; i++) {
+    int network_to_mutate = rand() % (pop->num_networks - 1) + 1;
+    MutateNetwork(&pop->networks[network_to_mutate], c);
+  }
+  
   EvaluatePopulation(pop, c);
   return 0;
 }
 
 void KillPopulation(Population_Ptr pop) {
   free(pop->networks);
-  pop->networks = NULL;
-
   free(pop->network_order);
+  free(pop->old_networks);
+  free(pop->old_network_order);
+
+  pop->networks = NULL;
   pop->network_order = NULL;
+  pop->old_networks = NULL;
+  pop->old_network_order = NULL;
 
   pop->num_networks = 0;
 
@@ -77,26 +119,6 @@ void KillPopulation(Population_Ptr pop) {
 
 double BestFitness(Population_Ptr pop) {
   return pop->network_order[0]->fitness;
-}
-
-int SetNextGeneration(Population_Ptr pop, Config_Ptr c) {
-  Network_Ptr new_networks = (Network_Ptr) 
-                             malloc(sizeof(Network) * pop->num_networks);
-
-  new_networks[0] = *pop->network_order[0];
-  pop->network_order[0] = &new_networks[0];
-  for (int i = 1; i < pop->num_networks; i++) {
-    int cloned_network_index = fmin(rand() % pop->num_networks,
-                                    rand() % pop->num_networks);
-    new_networks[i] = *pop->network_order[cloned_network_index];
-    pop->network_order[i] = &new_networks[i];
-    MutateNetwork(&new_networks[i], c);
-  }
-  
-  free(pop->networks);
-  pop->networks = new_networks;
-  EvaluatePopulation(pop, c);
-  return 0;
 }
 
 void GetSmallStatus(Population_Ptr pop, char *return_buf) {

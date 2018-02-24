@@ -99,6 +99,18 @@ bool RemoveReaction(Network_Ptr network);
 //                parameters. See Config.h
 void ModifyRateConstant(Network_Ptr network, Config_Ptr config);
 
+// Sets the initial concentrations for the given network, before 
+// advancing the network ode in time
+//
+// Parameters:
+//      network - The network to set the initial conditions for
+//      cvode_data - Data structure containing the species
+//                   concentrations. This will be set to the
+//                   intial concentrations after calling this
+//                   method
+//      c - The user parameters
+//      data_point - The index of the input data point used for this
+//                   that will be used in a future evaluation
 void SetInitialConcentrations(Network_Ptr network,
                               CvodeData_Ptr cvode_data,
                               Config_Ptr c,
@@ -108,6 +120,20 @@ void SetInitialConcentrations(Network_Ptr network,
 // Network Evaluation Method //
 ////////////////////////////////
 
+// Evaluates the given network. After calling this, the network's fitness
+// field will be set to the network's fitness
+//
+// Parameters:
+//      network - The network to evaluate
+//      c - The user defined parameters
+//      cvode_data - pointer to the necessary values for cvode to work
+//      user_data - pointer to the necessary values for this network to be
+//                  evaluated
+//
+// Returns:
+//      0 if the network was successfully evaluated, 1 otherwise. If the
+//      network evaluation was unsuccessful, the network fitness is set to
+//      infinity
 int EvaluateNetwork(Network_Ptr network,
                     Config_Ptr c,
                     CvodeData_Ptr cvode_data,
@@ -117,6 +143,16 @@ int EvaluateNetwork(Network_Ptr network,
 // toString method //
 /////////////////////
 
+// Returns a representative string of the network through return_buf
+//
+// Parameters:
+//      network - The network to return as string on
+//      return_buf - character aray that will contain the network string
+//                   after this method completes
+//      pre_reaction - characters to be included before each reaction in
+//                     the string (i.e. "  ")
+//      post_reaction - characters to be included after each reaction in
+//                      the string (i.e. "\n")
 void GetNetworkString(Network_Ptr network,
                       char *return_buf,
                       const char *pre_reaction,
@@ -126,12 +162,19 @@ void GetNetworkString(Network_Ptr network,
 // Network Source and Sink Checking methods //
 //////////////////////////////////////////////
 
+// Returns true is the given species is a source in this network, 
+// false otherwise
 bool IsSource(Network_Ptr network, species_t species);
 
+// Returns true is the given species is a sink in this network, 
+// false otherwise
 bool IsSink(Network_Ptr network, species_t species);
 
+// Returns true is the given species is in this network
+// but is neither a source nor a sink, false otherwise
 bool IsChanging(Network_Ptr network, species_t species);
 
+// Returns true is the given species is in this network, false otherwise
 bool IsInNetwork(Network_Ptr network, species_t species);
 
 #endif // _NETWORK_H_

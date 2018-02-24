@@ -24,7 +24,7 @@
 ////////////////////////////////////////////
 
 static void SetSourcesAndSinks(Network_Ptr network) {
-  // Initially sources and sinks simply mark whether a species appears as a
+  // sources and sinks simply mark whether a species appears as a
   // reactant or product, respectively. Mark no species initially 
   network->sources = 0;
   network->sinks = 0;
@@ -128,6 +128,9 @@ void MutateNetwork(Network_Ptr network, Config_Ptr config) {
   if (mutation > 0 || network_changed == false) {
     ModifyRateConstant(network, config);
   }
+
+  // If the newly modified network does not have both a source
+  // and a sink, remake the network
   if (network->sources == 0 || network->sinks == 0) {
     SetRandomNetwork(network, config);
   }
@@ -137,9 +140,8 @@ bool AddReaction(Network_Ptr network, Config_Ptr config) {
   if (network->num_reactions == MAX_NUM_REACTIONS) {
     return false;
   }
-
-  SetRandomReaction(&network->reactions[network->num_reactions], config);
   network->num_reactions++;
+  SetRandomReaction(&network->reactions[network->num_reactions], config);
   SetSourcesAndSinks(network);
   return true;
 }
@@ -168,6 +170,12 @@ void SetInitialConcentrations(Network_Ptr network,
                               int data_point) {
   realtype *init_concentration_data = NV_DATA_S(cvode_data->concentration_mem);
 
+  // If the function for evaluation is one of the ones seen below, then
+  // the intial concentrations will be made as follows:
+  // All non-source species will have initial concentrations of 0. The first source
+  // species will have a concentration equal to the the input value at the given
+  // data_point index. The rest of the sources will have concentrations equal to
+  // that of the user defined initial concentration
   bool first_source_found = false;
   if (c->function_type == SQUARE_ROOT || c->function_type == CUBE_ROOT
       || c->function_type == CUBE || c->function_type == SQUARE) {
@@ -194,6 +202,8 @@ void SetInitialConcentrations(Network_Ptr network,
 // Network Evaluation Methods //
 ////////////////////////////////
 
+// Update the fitness of each species in the network by comparing it's
+// concentration at the current time to the target concentration
 static void UpdateSpeciesFitnesses(double *species_fitness,
                                    Network_Ptr network,
                                    double target,
@@ -209,6 +219,8 @@ static void UpdateSpeciesFitnesses(double *species_fitness,
   }
 }
 
+// Set the network's fitness value to the smallest fitness seen
+// for any species withing the network
 static void SetNetworkFitness(Network_Ptr network,
                               double *species_fitness,
                               Config_Ptr c) {
@@ -220,7 +232,12 @@ static void SetNetworkFitness(Network_Ptr network,
   }
 }
 
-
+// Evaluate the network over time, using the user inputs as time points.
+// The network ode is solved from each input time point to the next, and
+// at each point the species concentration is compared with the target output
+// concentration. The species with the smallest total deviation
+// from the targets at each time point will have the smallest fitness,
+// and that will be used to set the network's fitness
 static int EvaluateNetworkVsTime(Network_Ptr network,
                                  Config_Ptr c,
                                  CvodeData_Ptr cvode_data) {
@@ -247,6 +264,12 @@ static int EvaluateNetworkVsTime(Network_Ptr network,
   return 0;
 }
 
+// Evaluate the network over steady states, using the user inputs as initial
+// source concentrations. The network ode is solved until it reaches steady state,
+// after which each species concentration is compared with the target output
+// concentration. The species with the smallest total deviation
+// from the targets at each time point will have the smallest fitness,
+// and that will be used to set the network's fitness
 static int EvaluateNetworkVsConcentration(Network_Ptr network,
                                           Config_Ptr c,
                                           CvodeData_Ptr cvode_data,

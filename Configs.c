@@ -12,6 +12,11 @@
 
 #include "Configs.h"
 
+/* Sets the inputs and outputs that the networks will be evaluated with
+ *
+ * Parameters:
+ *      c - The struct to fill
+ */
 static void SetTestData(Config_Ptr c) {
   c->inputs = (double *) malloc(sizeof(double) * c->num_data_pts);
   c->outputs = (double *) malloc(sizeof(double) * c->num_data_pts);
@@ -52,8 +57,8 @@ static void SetTestData(Config_Ptr c) {
     case OSCILLATOR:
       {
         for (int i = 0; i < c->num_data_pts; i++) {
-          c->inputs[i] = i;
-          c->outputs[i] = c->initial_concentrations + (i + 1) % 3 - 1;
+          c->inputs[i] = i * 5;
+          c->outputs[i] = c->initial_concentrations + ((i + 1) * 5) % 15 - 5;
         }
         break;
       }
@@ -73,6 +78,20 @@ static void SetTestData(Config_Ptr c) {
   }
 }
 
+/* Reads a parameter and its value from a single line of a given file. Advances
+ * the cursor of the file by one line
+ *
+ * Parameters:
+ *      f - Pointer to the file parameters are read from
+ *      config_name - Return parameter. Contains the parameter's name as per
+ *                    the first token of the current line of the file
+ *      config_val - Return parameter. Contains the parameter's value as per
+ *                    the second token of the current line of the file
+ *
+ * Returns:
+ *      1 if the file has either been fully read or there was a format error
+ *      0 otherwise
+ */
 static int GetConfig(FILE *f, char *config_name, char  *config_val) {
   char buf[128];
   if (fgets(buf, 128, f) == NULL) {
@@ -86,6 +105,13 @@ static int GetConfig(FILE *f, char *config_name, char  *config_val) {
   return 0;
 }
 
+/* Sets a parameter and its value into the configuration struct c
+ *
+ * Parameters:
+ *      c - Struct containing evolver parameters
+ *      config_name - The parameter's name
+ *      config_val - The parameter's value
+ */
 static void SetConfig(Config_Ptr c, char *config_name, char *config_val) {
   double config_val_numerical;
 
@@ -149,7 +175,9 @@ static void SetConfig(Config_Ptr c, char *config_name, char *config_val) {
     c->max_num_generations = config_val_numerical;
   } else if (strcmp(config_name, "fitnessThresholdToStop") == 0) {
     c->fit_threshold = config_val_numerical;
-  } 
+  } else if(strcmp(config_name, "percentageClone") == 0) {
+    c->percentage_clone = config_val_numerical;
+  }
 
   /* Output Parameters */
   if (strcmp(config_name, "intervalForOutput") == 0) {
@@ -164,32 +192,44 @@ static void SetConfig(Config_Ptr c, char *config_name, char *config_val) {
   }
 }
 
+/* Does some basic validation of the given evolving parameters
+ *
+ * Parameters:
+ *      c - Struct containing evolver parameters
+ */
 static void ValidateConfigs(Config_Ptr c) {
   double max_err = 1e-10;
+
+  // Check the reaction generation probabilities sum to 1
   if (fabs(c->prob_uni_uni + c->prob_uni_bi + c->prob_bi_uni
            + c->prob_bi_bi - 1) > max_err) {
-    printf("  Defauts used for reaction type probabilites\n");
-    c->prob_uni_uni = 0.25;
-    c->prob_uni_bi = 0.25;
-    c->prob_bi_uni = 0.25;
-    c->prob_bi_bi = 0.25;
+    printf("Reaction generation probabilities do not sum to 1");
+    exit(EXIT_FAILURE);
   }
 
+  // Check network mutation probabilities sum to 1
   if (fabs(c->prob_add_reaction + c->prob_remove_reaction + c->prob_rate_change
            - 1) > max_err) {
-    printf("  Defaults used for mutation probabilites\n");
-    c->prob_add_reaction = 0.333;
-    c->prob_remove_reaction = 0.333;
-    c->prob_rate_change = 0.333;
+    printf("Reaction mutation probabilities do not sum to 1");
+    exit(EXIT_FAILURE);
   }
 
+  // Check that the minimum number reactions is at most equal to the maximum
+  // number of reactions
   if (c->max_num_reactions < c->min_num_reactions) {
-    printf("  Defaults used for the range of reactions per network\n");
-    c->max_num_reactions = 20;
-    c->min_num_reactions = 2;
+    printf("Max reactions must be greater than or equal to min reactions");
+    exit(EXIT_FAILURE);
   }
 }
 
+/* Opens the given file
+ *
+ * Parameters:
+ *      file_name - the file to be opened
+ * 
+ * Returns:
+ *      A pointer to the given file if successful, NULL otherwise
+ */
 static FILE* OpenConfigurationFile(const char *file_name) {
   FILE *f;
   if (file_name != NULL) {
